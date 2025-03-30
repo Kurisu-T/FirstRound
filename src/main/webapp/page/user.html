@@ -15,12 +15,16 @@
     <p><input type="submit" value="修改"></p>
 </form>
 
-<br>
+<hr>
 
-<from id="movieList">
+<form id="userOrders">
+    <p><button type="button" id="orderBtn">订单历史</button></p>
+</form>
+
+<form id="movieList">
     <p><button type="button" name="movie">电影列表</button></p>
     <pre id="jsonOutput"></pre>
-</from>
+</form>
 
 <script>
     // 页面加载时获取用户数据
@@ -113,6 +117,28 @@
         .catch(error => {
             console.error('获取数据失败:', error);
             alert('数据获取失败');
+        });
+    });
+
+    document.getElementById('orderBtn').addEventListener('click', function() {
+        fetch('/order/list', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '/index.html';
+                return Promise.reject('需要登录');
+            }
+            return response.json();
+        })
+        .then(data => {
+            sessionStorage.setItem('orderData', JSON.stringify(data));
+            window.location.href = '/page/userOrder.html';
+        })
+        .catch(error => {
+            console.error('获取订单失败:', error);
+            alert(error === '需要登录' ? '请先登录' : '获取订单失败');
         });
     });
 

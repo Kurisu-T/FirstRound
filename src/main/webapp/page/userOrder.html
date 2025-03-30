@@ -2,10 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户订单列表</title>
+    <title>订单列表</title>
 </head>
 <body>
-    <h1>Hello world</h1>
+    <h2>订单历史</h2>
+    <pre id="orderData"></pre>
+
+    <script>
+    // 页面加载时自动请求数据
+    window.addEventListener('load', function() {
+        fetch('/order/list', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if(response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            const displayDiv = document.getElementById('orderData');
+            if(data && data.code === 200) {
+                displayDiv.textContent = JSON.stringify(data.data, null, 2);
+            } else {
+                displayDiv.textContent = data?.msg || '获取订单失败';
+            }
+        })
+        .catch(error => {
+            console.error('请求失败:', error);
+            document.getElementById('orderData').textContent = '数据加载失败';
+        });
+    });
+    </script>
 </body>
 </html>

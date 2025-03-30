@@ -29,9 +29,11 @@ public class OrderController extends HttpServlet {
 
         String path = req.getPathInfo();
 
+        System.out.println(path);
+
         switch (path) {
             case "/list":
-                System.out.println("going to order list");
+                System.out.println("going to list");
                 userOrderList(req, resp, userId, adminId);
                 break;
             default:
@@ -47,14 +49,6 @@ public class OrderController extends HttpServlet {
 //            System.out.println("Test of Admin...... " + adminId);
 //            req.getRequestDispatcher("/WEB-INF/AdminOrder.jsp").forward(req, resp);
 //        }
-    }
-
-    private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
-        List<Orders> list = orderService.list(userId, adminId);
-        String json = jsonUtils.toOrderJson(list);
-        System.out.println(json);
-        resp.getWriter().write(json);
-//        req.setAttribute("orders", json);
     }
 
     @Override
@@ -74,6 +68,22 @@ public class OrderController extends HttpServlet {
                 break;
         }
 
+    }
+
+    /**
+     * 用户获取订单历史
+     * @param req
+     * @param resp
+     * @param userId
+     * @param adminId
+     * @throws IOException
+     */
+    private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
+        List<Orders> list = orderService.list(userId, adminId);
+        String json = jsonUtils.toOrderJson(list);
+        System.out.println(json);
+        resp.getWriter().write(json);
+//        req.setAttribute("orders", json);
     }
 
     private void buyTicket(HttpServletRequest req, HttpServletResponse resp) throws IOException {

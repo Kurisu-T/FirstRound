@@ -65,18 +65,6 @@
                 // 处理响应结果
                 if (data.code === '200') {
                     alert('购票成功');
-                    fetch('/order/list',{
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: params,
-                        credentials: 'include' // 携带Cookie
-                    })
-                    .catch(error => {
-                        console.error('获取订单列表失败', error);
-                        alert('获取订单列表失败')
-                    });
                     window.location.href = '/page/userOrder.html'; // 可选刷新
                 } else {
                     alert(`购票失败：${data.msg}`);
