@@ -3,6 +3,7 @@ package com.anyview.yjy.controller;
 import com.anyview.yjy.entity.Admin;
 import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.AdminService;
+import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.AdminLoginDTO;
 import com.anyview.yjy.utils.VO.AdminLoginVO;
 import com.anyview.yjy.utils.VO.AdminRegisterVO;
@@ -16,21 +17,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/admin/*")
 public class AdminController extends HttpServlet {
 
     AdminService adminService = new AdminService();
+    UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        String path = req.getPathInfo();
-        if(path.equals("/data")){
-            getById(req, resp);
-            return;
-        }
-
         HttpSession session = req.getSession();
 
         Long adminId = (Long) session.getAttribute("adminId");
@@ -43,9 +39,22 @@ public class AdminController extends HttpServlet {
             resp.sendRedirect("index.html");
             return;
         }
-        System.out.println(admin);
-        req.getSession().setAttribute("admin", admin);
-        req.getRequestDispatcher("/admin.html").forward(req, resp);
+
+        String path = req.getPathInfo();
+        switch (path) {
+            case "/data":
+                getById(req, resp);
+                return;
+            case "/userList":
+                getUserList(req, resp);
+                break;
+            default:
+                resp.getWriter().write(Result.error("域名错误"));
+                break;
+        }
+
+//        req.getSession().setAttribute("admin", admin);
+//        req.getRequestDispatcher("/admin.html").forward(req, resp);
     }
 
     @Override
@@ -74,6 +83,12 @@ public class AdminController extends HttpServlet {
 
     }
 
+    /**
+     * 根据id查询管理员
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
     private void getById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long adminId = (Long) req.getSession().getAttribute("adminId");
         if(adminId == null){
@@ -186,5 +201,15 @@ public class AdminController extends HttpServlet {
             resp.getWriter().write(Result.success(vo));
 //            resp.sendRedirect("/admin");
         }
+    }
+
+    /**
+     * 获取用户信息
+     * @param req
+     * @param resp
+     */
+    private void getUserList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<User> list = userService.list();
+        resp.getWriter().write(Result.success(list));
     }
 }

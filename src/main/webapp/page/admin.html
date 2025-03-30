@@ -15,6 +15,20 @@
     <p><input type="submit" value="修改"></p>
 </form>
 
+<hr>
+
+<form id="order">
+    <p><button type="button" id="orderBtn">订单管理</button></p>
+</form>
+
+<form id="movie">
+    <p><button type="button" id="movieBtn">电影管理</button></p>
+</form>
+
+<form id="manageUser">
+    <p><button type="button" id="userManageBtn">用户管理</button></p>
+</form>
+
 <script>
     // 页面加载时获取用户数据
     document.addEventListener('DOMContentLoaded', function() {
@@ -92,6 +106,19 @@
                 alert('请求失败，请检查网络');
             });
     });
+
+    document.getElementById('orderBtn').addEventListener('click', function() {
+        window.location.href = 'adminOrder.html';
+    });
+
+    document.getElementById('movieBtn').addEventListener('click', function() {
+        window.location.href = 'movieAdmin.html';
+    });
+
+    document.getElementById('userManageBtn').addEventListener('click', function() {
+        window.location.href = 'userManage.html';
+    });
+
 </script>
 </body>
 </html>

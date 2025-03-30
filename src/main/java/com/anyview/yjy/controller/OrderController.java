@@ -23,7 +23,7 @@ public class OrderController extends HttpServlet {
 
         if((userId == null && adminId == null) || (userId != null && adminId != null)) {
             req.getSession().invalidate();
-            resp.sendRedirect("index.html");
+            resp.getWriter().write(Result.error("请尝试重新登录"));
             return;
         }
 
@@ -33,8 +33,10 @@ public class OrderController extends HttpServlet {
 
         switch (path) {
             case "/list":
-                System.out.println("going to list");
                 userOrderList(req, resp, userId, adminId);
+                break;
+            case "/manage":
+                adminOrderList(req, resp, userId, adminId);
                 break;
             default:
                 resp.getWriter().write(Result.error("域名错误"));
@@ -81,11 +83,30 @@ public class OrderController extends HttpServlet {
     private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
         String json = jsonUtils.toOrderJson(list);
-        System.out.println(json);
         resp.getWriter().write(json);
 //        req.setAttribute("orders", json);
     }
 
+    /**
+     * 管理订单
+     * @param req
+     * @param resp
+     * @param userId
+     * @param adminId
+     */
+    private void adminOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
+        List<Orders> list = orderService.list(userId, adminId);
+        String json = jsonUtils.toOrderJson(list);
+        resp.getWriter().write(json);
+    }
+
+
+    /**
+     * 购票
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
     private void buyTicket(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
 

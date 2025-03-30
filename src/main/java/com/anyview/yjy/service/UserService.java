@@ -6,6 +6,8 @@ import com.anyview.yjy.utils.DTO.UserLoginDTO;
 import com.anyview.yjy.utils.VO.UserLoginVO;
 import com.anyview.yjy.utils.VO.UserRegisterVO;
 
+import java.util.List;
+
 public class UserService {
     private UserDao userDao = new UserDao();
 
@@ -53,5 +55,9 @@ public class UserService {
 
     public UserLoginVO getByPhone(String phone) {
         return userDao.getByPhone(phone);
+    }
+
+    public List<User> list() {
+        return userDao.list();
     }
 }

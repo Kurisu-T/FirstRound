@@ -23,6 +23,11 @@
             return response.json();
         })
         .then(data => {
+            if(data.code === '500') {
+                console.error('无权限', error);
+                window.location.href = '/index.html';
+                return;
+            }
             const displayDiv = document.getElementById('orderData');
             if(data && data.code === 200) {
                 displayDiv.textContent = JSON.stringify(data.data, null, 2);
