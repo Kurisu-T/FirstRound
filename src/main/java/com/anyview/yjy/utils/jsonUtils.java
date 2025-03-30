@@ -79,38 +79,23 @@ public class jsonUtils {
 
     public static String toOrderJson(List<Orders> list) {
         Integer number = list.size();
-        String json = "{\"number\": " + number + ", \"data\": [";
-        for (Orders order : list) {
-            json +=  "{";
-
-            Long id = order.getId();
-            Long user_id = order.getUserId() == null ? -1L : order.getUserId();
-            Long movie = order.getMovie();
-            Long hall = order.getHall();
-            Long seat = order.getSeat();
-            LocalDateTime showTime = order.getShowTime();
-            LocalDateTime createTime = order.getCreateTime();
-            Long status = order.getStatus();
-
-            json += "\"id\": \"" + id + "\", ";
-            if(user_id != -1) {
-                json += "\"user_id\": \"" + user_id + "\", ";
+        String json = "{\"code\":200,\"msg\":\"success\",\"data\":{\"number\":" + number + ",\"list\":[";
+        for (Orders vo : list) {
+            json += "{\"id\":" + vo.getId() + ", ";
+            if(vo.getUserId() != null){
+                json +=  "\"user_id\":" + vo.getUserId() + ", ";
             }
-            json += "\"movie\": \"" + movie + "\", ";
-            json += "\"hall\": \"" + hall + "\", ";
-            json += "\"seat\": \"" + seat + "\", ";
-            json += "\"show_time\": \"" + showTime + "\", ";
-            json += "\"create_time\": \"" + createTime + "\", ";
-            json += "\"status\": \"" + status + "\"";
-            json += "}";
-            if(order != list.get(number - 1)) {
-                json += ", ";
-            }
-            else {
+            json += "\"movie\":" + vo.getMovie() + "," + "\"hall\":" + vo.getHall() + ", " +
+                    "\"seat\":" + vo.getSeat() + ", " + "\"show_time\":\"" + vo.getShowTime() + "\"," +
+                    "\"create_time\":\"" + vo.getCreateTime() + "\"" + ", "+ "\"status\":" + vo.getStatus() + "}";
+            if(vo == list.get(list.size()-1)){
                 json += "]";
             }
+            else json += ",";
         }
-        json += "}";
+
+        json += "}}";
+
         return json;
     }
 }

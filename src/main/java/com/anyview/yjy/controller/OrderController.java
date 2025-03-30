@@ -27,19 +27,34 @@ public class OrderController extends HttpServlet {
             return;
         }
 
+        String path = req.getPathInfo();
+
+        switch (path) {
+            case "/list":
+                System.out.println("going to order list");
+                userOrderList(req, resp, userId, adminId);
+                break;
+            default:
+                resp.getWriter().write(Result.error("域名错误"));
+                break;
+        }
+
+//        if(userId != null && userId > 0) {
+//            System.out.println("Test of User...... " + userId);
+//            req.getRequestDispatcher("/WEB-INF/UserOrder.jsp").forward(req, resp);
+//        }
+//        else if(adminId != null && adminId > 0) {
+//            System.out.println("Test of Admin...... " + adminId);
+//            req.getRequestDispatcher("/WEB-INF/AdminOrder.jsp").forward(req, resp);
+//        }
+    }
+
+    private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
         String json = jsonUtils.toOrderJson(list);
+        System.out.println(json);
         resp.getWriter().write(json);
-        req.setAttribute("orders", json);
-
-        if(userId != null && userId > 0) {
-//            System.out.println("Test of User...... " + userId);
-            req.getRequestDispatcher("/WEB-INF/UserOrder.jsp").forward(req, resp);
-        }
-        else if(adminId != null && adminId > 0) {
-//            System.out.println("Test of Admin...... " + adminId);
-            req.getRequestDispatcher("/WEB-INF/AdminOrder.jsp").forward(req, resp);
-        }
+//        req.setAttribute("orders", json);
     }
 
     @Override
