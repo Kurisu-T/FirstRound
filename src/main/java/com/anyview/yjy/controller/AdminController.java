@@ -1,8 +1,10 @@
 package com.anyview.yjy.controller;
 
 import com.anyview.yjy.entity.Admin;
+import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.AdminService;
+import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.AdminLoginDTO;
 import com.anyview.yjy.utils.VO.AdminLoginVO;
@@ -24,12 +26,14 @@ public class AdminController extends HttpServlet {
 
     AdminService adminService = new AdminService();
     UserService userService = new UserService();
+    OrderService orderService = new OrderService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
 
         Long adminId = (Long) session.getAttribute("adminId");
+        Long userId = (Long) session.getAttribute("userId");
         if(adminId == null){
             resp.sendRedirect("index.html");
             return;
@@ -48,6 +52,9 @@ public class AdminController extends HttpServlet {
             case "/userList":
                 getUserList(req, resp);
                 break;
+            case "/orderList":
+                getOrderList(req, resp, userId, adminId);
+                break;
             default:
                 resp.getWriter().write(Result.error("域名错误"));
                 break;
@@ -56,6 +63,7 @@ public class AdminController extends HttpServlet {
 //        req.getSession().setAttribute("admin", admin);
 //        req.getRequestDispatcher("/admin.html").forward(req, resp);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -210,6 +218,16 @@ public class AdminController extends HttpServlet {
      */
     private void getUserList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<User> list = userService.list();
+        resp.getWriter().write(Result.success(list));
+    }
+
+    /**
+     * 获取订单信息
+     * @param req
+     * @param resp
+     */
+    private void getOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
+        List<Orders>list = orderService.list(userId, adminId);
         resp.getWriter().write(Result.success(list));
     }
 }

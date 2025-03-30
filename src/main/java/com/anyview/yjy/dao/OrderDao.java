@@ -122,7 +122,7 @@ public class OrderDao {
         order.setShowTime(movie.getShowTime());
         order.setCreateTime(LocalDateTime.now());
 
-        order.setStatus(code.ORDER_UNPAID); // 订单状态未支付
+        order.setStatus(ORDER_UNPAID); // 订单状态未支付
 
         try {
             ps = conn.prepareStatement(sql);
@@ -172,5 +172,36 @@ public class OrderDao {
         }
 
         return true;
+    }
+
+    /**
+     * 获取所有订单
+     * @return
+     */
+    public List<Orders> getAll() {
+        List<Orders> list = new ArrayList<>();
+
+        String sql = "select * from orders";
+
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                Orders order = new Orders();
+                order.setId(rs.getLong("id"));
+                order.setUserId(rs.getLong("user_id"));
+                order.setMovie(rs.getLong("movie"));
+                order.setHall(rs.getLong("hall"));
+                order.setSeat(rs.getLong("seat"));
+                order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
+                order.setStatus(rs.getLong("status"));
+                list.add(order);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

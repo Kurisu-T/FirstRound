@@ -6,6 +6,40 @@
     <title>订单管理</title>
 </head>
 <body>
-    <h1>TEST</h1>
+    <h3>订单历史</h3>
+    <pre id="orderData"></pre>
+
+    <script>
+        window.addEventListener('load', function() {
+            fetch('/admin/orderList', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => {
+                if(response.status === 401) {
+                    window.location.href = '/index.html';
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.code === '500') {
+                    console.error('无权限', error);
+                    window.location.href = '/index.html';
+                    return;
+                }
+                const displayDiv = document.getElementById('orderData');
+                if(data && data.code === '200') {
+                    displayDiv.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    displayDiv.textContent = data?.msg || '获取订用户信息失败';
+                }
+            })
+            .catch(error => {
+                console.error('请求失败:', error);
+                document.getElementById('orderData').textContent = '数据加载失败';
+            });
+        });
+    </script>
 </body>
 </html>

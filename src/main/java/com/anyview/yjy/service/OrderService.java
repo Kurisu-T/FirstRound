@@ -26,4 +26,8 @@ public class OrderService {
     public Long add(Long userId, Long movieId,Long seatId) {
         return orderDao.add(userId, movieId, seatId);
     }
+
+    public List<Orders> getAll() {
+        return orderDao.getAll();
+    }
 }

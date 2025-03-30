@@ -18,6 +18,7 @@ public class jsonUtils {
      */
     public static String toJson(Object data) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
         try {
             return mapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {

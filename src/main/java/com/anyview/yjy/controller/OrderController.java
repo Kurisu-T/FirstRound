@@ -96,8 +96,8 @@ public class OrderController extends HttpServlet {
      */
     private void adminOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
-        String json = jsonUtils.toOrderJson(list);
-        resp.getWriter().write(json);
+//        String json = jsonUtils.toOrderJson(list);
+        resp.getWriter().write(Result.success(list));
     }
 
 

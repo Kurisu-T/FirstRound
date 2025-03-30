@@ -111,19 +111,19 @@ public class MovieController extends HttpServlet {
 
         if(userId != null && userId > 0) {
             List<MovieVO> list = movieService.list();
-            String movieJSON = jsonUtils.toJson(list);
-            if(movieJSON.equals("error")){
-                resp.getWriter().write(Result.error("error"));
-                return;
-            }
-            resp.getWriter().write(movieJSON);
+//            String movieJSON = jsonUtils.toJson(list);
+//            if(movieJSON.equals("error")){
+//                resp.getWriter().write(Result.error("error"));
+//                return;
+//            }
+            resp.getWriter().write(Result.success(list));
 //            req.setAttribute("movie", movieJSON);
 //            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
         }
         else if(adminId != null && adminId > 0) {
             List<Movie> list = movieService.listByAdmin();
-            String movieJSON = jsonUtils.toMovieJson(list);
-            resp.getWriter().write(movieJSON);
+//            String movieJSON = jsonUtils.toMovieJson(list);
+            resp.getWriter().write(Result.success(list));
 //            req.setAttribute("movie", movieJSON);
 //            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
         }
@@ -188,10 +188,10 @@ public class MovieController extends HttpServlet {
         movie.setHall(hall);
         movie.setShowTime(showTime);
         movie.setDescription(description);
-        System.out.println("going to update movie......");
         movieService.update(movie);
         req.removeAttribute("movie");
-        resp.getWriter().write(jsonUtils.toJson(movie));
+//        resp.getWriter().write(jsonUtils.toJson(movie));
+        resp.getWriter().write(Result.success(movie));
         try {
             doGet(req, resp);
         } catch (ServletException e) {
