@@ -1,9 +1,11 @@
 package com.anyview.yjy.controller;
 
 import com.anyview.yjy.entity.Admin;
+import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.AdminService;
+import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.AdminLoginDTO;
@@ -27,6 +29,7 @@ public class AdminController extends HttpServlet {
     AdminService adminService = new AdminService();
     UserService userService = new UserService();
     OrderService orderService = new OrderService();
+    MovieService movieService = new MovieService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,6 +58,9 @@ public class AdminController extends HttpServlet {
             case "/orderList":
                 getOrderList(req, resp, userId, adminId);
                 break;
+            case "/movieList":
+                getMovieList(req, resp);
+                break;
             default:
                 resp.getWriter().write(Result.error("域名错误"));
                 break;
@@ -63,7 +69,6 @@ public class AdminController extends HttpServlet {
 //        req.getSession().setAttribute("admin", admin);
 //        req.getRequestDispatcher("/admin.html").forward(req, resp);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -228,6 +233,16 @@ public class AdminController extends HttpServlet {
      */
     private void getOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders>list = orderService.list(userId, adminId);
+        resp.getWriter().write(Result.success(list));
+    }
+
+    /**
+     * 获取电影信息
+     * @param req
+     * @param resp
+     */
+    private void getMovieList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<Movie> list = movieService.listByAdmin();
         resp.getWriter().write(Result.success(list));
     }
 }
