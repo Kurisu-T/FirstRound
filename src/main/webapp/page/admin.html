@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员界面</title>
+</head>
+<body>
+<form id="updateForm">
+    <h2>管理员信息</h2>
+    <p>管理员id: <span id="adminId"></span></p>
+    <p>管理员名称: <input type="text" name="name" required></p>
+    <p>电话: <input type="text" name="phone" required></p>
+    <p>密码: <input type="text" name="password" required></p>
+    <p><input type="submit" value="修改"></p>
+</form>
+
+<script>
+    // 页面加载时获取用户数据
+    document.addEventListener('DOMContentLoaded', function() {
+        // 第一步：请求用户数据
+        fetch('/admin/data', {
+            method: 'GET',
+            credentials: 'include' // 携带cookie
+        })
+            .then(response => {
+                // 处理401未授权
+                if (response.status === '500') {
+                    window.location.href = '/index.html';
+                    return Promise.reject('未授权');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 处理成功响应
+                if (data && data.code === '200') {
+                    const admin = data.data;
+                    // 填充表单数据
+                    document.getElementById('adminId').textContent = admin.id;
+                    document.querySelector('input[name="name"]').value = admin.name || '';
+                    document.querySelector('input[name="phone"]').value = admin.phone || '';
+                    document.querySelector('input[name="password"]').value = admin.password || '';
+                }
+            })
+            .catch(error => {
+                console.error('获取用户数据失败:', error);
+                alert('无法加载用户信息');
+            });
+    });
+
+    // 修改表单提交
+    document.getElementById('updateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 1. 获取用户ID和表单数据
+        const adminId = document.getElementById('adminId').textContent;
+        const formData = new FormData(this);
+
+        // 2. 添加用户ID到请求参数（关键）
+        formData.append('id', adminId);
+
+        // 3. 发送更新请求
+        fetch('/admin/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formData),
+            credentials: 'include' // 携带Cookie
+        })
+            .then(response => {
+                // 4. 处理未授权情况
+                if (response.status === '500') {
+                    window.location.href = '/index.html';
+                    return Promise.reject('未登录');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 5. 处理响应结果
+                if (data.code === '200') {
+                    alert('修改成功');
+                    window.location.reload(); // 可选刷新
+                } else {
+                    alert(`修改失败：${data.msg}`);
+                }
+            })
+            .catch(error => {
+                console.error('更新错误:', error);
+                alert('请求失败，请检查网络');
+            });
+    });
+</script>
+</body>
+</html>

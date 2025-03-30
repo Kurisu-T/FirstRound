@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录入口</title>
+</head>
+<body>
+<h2>普通用户</h2>
+<form id="userLoginForm" method="post">
+    <p>登录</p>
+    <p>电话：<input type="text" name="phone" required></p>
+    <p>密码：<input type="text" name="password" required></p>
+    <p><input type="submit" value="登录"></p>
+</form>
+
+<form id="userRegisterForm" method="post">
+    <p>注册</p>
+    <p>用户名：<input type="text" name="name" required></p>
+    <p>电话：<input type="text" name="phone" required></p>
+    <p>密码：<input type="text" name="password" required></p>
+    <p><input type="submit" value="注册"></p>
+</form>
+
+<hr>
+
+<h2>管理员用户</h2>
+<form id="adminLoginForm" method="post">
+    <p>登录</p>
+    <p>电话：<input type="text" name="phone" required></p>
+    <p>密码：<input type="text" name="password" required></p>
+    <p><input type="submit" value="登录"></p>
+</form>
+
+<form id="adminRegisterForm" method="post">
+    <p>注册</p>
+    <p>用户名：<input type="text" name="name" required></p>
+    <p>电话：<input type="text" name="phone" required></p>
+    <p>密码：<input type="text" name="password" required></p>
+    <p><input type="submit" value="注册"></p>
+</form>
+
+<script>
+    document.getElementById('userLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/users/login', {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            credentials: 'include'  //携带cookie
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === '200') {
+                    window.location.href = `page/user.html?id=${data.data.id}`;
+                } else {
+                    alert('登录失败：' + data.msg);
+                }
+            });
+    });
+
+    document.getElementById('userRegisterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/users/register', {
+            method: 'POST',
+            headers: {  // 添加请求头
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(formData)
+        })
+            .then(response => {
+                if (!response.ok) {  // 添加HTTP状态码检查
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 修改状态码判断方式（数字类型）
+                if (data.code === '200') {
+                    alert('注册成功，请登录');
+                    this.reset();
+                } else {
+                    alert('注册失败：' + data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('注册请求失败:', error);
+                alert('网络请求异常，请重试');
+            });
+    });
+
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/admin/login', {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === '200') {
+                    window.location.href = 'page/admin.html';
+                } else {
+                    alert('登录失败：' + data.msg);
+                }
+            });
+    });
+
+    document.getElementById('adminRegisterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/admin/register', {
+            method: 'POST',
+            headers: {  // 添加请求头
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(formData)
+        })
+            .then(response => {
+                if (!response.ok) {  // 添加HTTP状态码检查
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 修改状态码判断方式（数字类型）
+                if (data.code === '200') {
+                    alert('注册成功，请登录');
+                    this.reset();
+                } else {
+                    alert('注册失败：' + data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('注册请求失败:', error);
+                alert('网络请求异常，请重试');
+            });
+    });
+</script>
+</body>
+
+</html>

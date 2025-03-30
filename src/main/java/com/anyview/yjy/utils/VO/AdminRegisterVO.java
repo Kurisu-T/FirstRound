@@ -1,0 +1,35 @@
+package com.anyview.yjy.utils.VO;
+
+public class AdminRegisterVO {
+    private String name;
+    private String phone;
+
+
+    public AdminRegisterVO() {
+    }
+
+    public AdminRegisterVO(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String toString() {
+        return "AdminRegisterVO{name = " + name + ", phone = " + phone + "}";
+    }
+}
