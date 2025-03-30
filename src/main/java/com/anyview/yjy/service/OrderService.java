@@ -23,7 +23,7 @@ public class OrderService {
      * @param seatId
      * @return
      */
-    public int add(Long userId, Long movieId,Long seatId) {
+    public Long add(Long userId, Long movieId,Long seatId) {
         return orderDao.add(userId, movieId, seatId);
     }
 }

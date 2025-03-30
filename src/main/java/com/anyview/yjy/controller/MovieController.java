@@ -78,9 +78,9 @@ public class MovieController extends HttpServlet {
             case "/user":
                 doGet(req, resp);
                 break;
-            case "/buy":
-                buyTicket(req, resp);
-                break;
+//            case "/buy":
+//                buyTicket(req, resp);
+//                break;
             case "/update":
                 getMovieById(req, resp);
                 break;
@@ -116,7 +116,6 @@ public class MovieController extends HttpServlet {
                 resp.getWriter().write(Result.error("error"));
                 return;
             }
-            System.out.println(movieJSON);
             resp.getWriter().write(movieJSON);
 //            req.setAttribute("movie", movieJSON);
 //            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
@@ -209,19 +208,19 @@ public class MovieController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void buyTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String movie = req.getParameter("movieID");
-        String seat = req.getParameter("seat");
-        Long movieId = Long.parseLong(movie);
-        Long seatId = Long.parseLong(seat);
-        Long userId = (Long) req.getSession().getAttribute("userId");
-        int res = orderService.add(userId, movieId, seatId);
-        if(res > 0) {
-            resp.getWriter().write(Result.success());
-            orderController.doGet(req, resp);
-        } else {
-            resp.getWriter().write(Result.error("购票失败"));
-        }
-    }
+//    private void buyTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        String movie = req.getParameter("movieID");
+//        String seat = req.getParameter("seat");
+//        Long movieId = Long.parseLong(movie);
+//        Long seatId = Long.parseLong(seat);
+//        Long userId = (Long) req.getSession().getAttribute("userId");
+//        int res = orderService.add(userId, movieId, seatId);
+//        if(res > 0) {
+//            resp.getWriter().write(Result.success());
+//            orderController.doGet(req, resp);
+//        } else {
+//            resp.getWriter().write(Result.error("购票失败"));
+//        }
+//    }
 
 }

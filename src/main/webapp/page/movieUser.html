@@ -12,10 +12,11 @@
 
     <hr>
     <form id="buyTicket">
-        <h4>购票</h4>
+        <h3>购票</h3>
         <div>
-            电影ID： <input type="text" name="moiveID" required>
-            <button type="submit" value="submitMovieID">购票</button>
+            电影ID： <input type="text" name="movieId" id="movieID" required>
+            座位号： <input type="text" name="seatId" id="seatID" required>
+            <input type="submit" value="购票">
         </div>
     </form>
 
@@ -35,6 +36,44 @@
         } else {
             rawDataDiv.textContent = "没有找到电影数据，请返回重新获取";
         }
+    });
+
+
+    document.getElementById('buyTicket').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const params = new URLSearchParams(formData);
+
+        fetch('/order/buy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params,
+            credentials: 'include' // 携带Cookie
+        })
+            .then(response => {
+                // 处理未授权情况
+                if (response.status === 401) {
+                    window.location.href = '/page/movieUser.html';
+                    return Promise.reject('购票失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 处理响应结果
+                if (data.code === '200') {
+                    alert('购票成功');
+                    window.location.href = '/page/userOrder.html'; // 可选刷新
+                } else {
+                    alert(`购票失败：${data.msg}`);
+                }
+            })
+            .catch(error => {
+                console.error('更新错误:', error);
+                alert('请求失败，请检查网络');
+            });
     });
     </script>
     

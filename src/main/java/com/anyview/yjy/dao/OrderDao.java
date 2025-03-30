@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.anyview.yjy.utils.code.*;
+
 public class OrderDao {
     private Connection conn;
     private PreparedStatement ps;
@@ -91,20 +93,27 @@ public class OrderDao {
      * @param seatId
      * @return
      */
-    public int add(Long userId, Long movieId, Long seatId) {
-        System.out.println(userId + " " + movieId + " " + seatId);
+    public Long add(Long userId, Long movieId, Long seatId) {
+
         if(userId == null || movieId == null || seatId == null) {
-            return 0;
+            return BUY_FAIL;
         }
+
         String sql = "insert into orders(user_id, movie, hall, seat, show_time, create_time, status) values(?,?,?,?,?,?,?)";
         MovieDTO movie = movieDao.getById(movieId);
-
-        boolean empty = isEmpty(movieId, seatId, movie.getShowTime());
-        if(!empty) {
-            return 0;
+        System.out.println(movie);
+        // 电影不存在
+        if(movie.getId() == null) {
+            return MOVIE_NO_FIND;
         }
 
-        if(movie == null) { return 0; }
+        // 检查订单是否冲突
+        boolean empty = isEmpty(movieId, seatId, movie.getShowTime());
+        if(!empty) {
+            return SEAT_NOT_NULL;
+        }
+
+        // 创建订单
         Orders order = new Orders();
         order.setUserId(userId);
         order.setMovie(movieId);
@@ -112,8 +121,8 @@ public class OrderDao {
         order.setSeat(seatId);
         order.setShowTime(movie.getShowTime());
         order.setCreateTime(LocalDateTime.now());
-        System.out.println(order.toString());
-        order.setStatus(code.ORDER_UNPAID);
+
+        order.setStatus(code.ORDER_UNPAID); // 订单状态未支付
 
         try {
             ps = conn.prepareStatement(sql);
@@ -125,9 +134,10 @@ public class OrderDao {
             ps.setString(6,order.getCreateTime().toString());
             ps.setLong(7, order.getStatus());
 
-            ps.executeUpdate();
-
-            return 1;
+            if(ps.executeUpdate() > 0) {
+                return BUY_SUCCESS;
+            }
+            return BUY_FAIL;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
