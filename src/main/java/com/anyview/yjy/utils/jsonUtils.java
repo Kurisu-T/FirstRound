@@ -34,65 +34,52 @@ public class jsonUtils {
      */
     public static String toJson(List<MovieVO>movieVO) {
         Integer number = movieVO.size();
-        String json = "{\"number\": \"" + number + "\" , \"data\":[";
+        if(number == 0){
+            String json = "{\"code\": 500,\"msg\":\"error\",\"data\": null}";
+            return json;
+        }
+        String json = "{\"code\":200,\"msg\":\"success\",\"data\":{\"number\":" + number + ",\"list\":[";
         for (MovieVO vo : movieVO) {
-            json +=  "{";
-            Long id = vo.getId();
-            String name = vo.getName();
-            LocalDateTime showTime = vo.getShowTime();
-            Long hall = vo.getHall();
-            String description = vo.getDescription();
-            json += "\"id\": \"" + id + "\" ,";
-            json += "\"name\": \"" + name + "\" ,";
-            json += "\"show_time\": \"" + showTime + "\" ,";
-            json += "\"hall\": \"" + hall + "\" ,";
-            json += "\"description\": \"" + description + "\"";
-            json += "}";
-            if(vo != movieVO.get(number - 1)) {
-                json += ", ";
-            }
-            else {
+            json += "{\"id\":" + vo.getId() + ", \"name\":\"" + vo.getName() +
+                    "\", \"show_time\":\"" + vo.getShowTime() +
+                    "\",\"hall\":" + vo.getHall() + ",\"description\":\"" +
+                    vo.getDescription() + "\"}";
+            if(vo == movieVO.get(movieVO.size()-1)){
                 json += "]";
+            } else {
+                json += ",";
             }
         }
-        json += "}";
+        json += "}}";
         return json;
     }
 
     public static String toMovieJson(List<Movie>list) {
         Integer number = list.size();
-        String json = "{\"number\": \"" + list.size() + "\", \"data\": [";
-
-        for (Movie movie : list) {
-            json +=  "{";
-
-            Long id = movie.getId();
-            String name = movie.getName();
-            Long hall = movie.getHall();
-            LocalDateTime show_time = movie.getShowTime();
-            LocalDateTime createTime = movie.getCreateTime();
-            String description = movie.getDescription();
-            json += "\"id\": \"" + id + "\", \"name\": \"" + name + "\", ";
-            json += "\"hall\": \"" + hall + "\", ";
-            json += "\"show_time\": \"" + show_time + "\", ";
-            json += "\"create_time\": \"" + createTime + "\", ";
-            json += "\"description\": \"" + description + "\"";
-            json += "}";
-
-            if(movie != list.get(number - 1)) {
-                json += ", ";
-            }
-            else {
+        if(number == 0){
+            String json = "{\"code\": 500,\"msg\":\"error\",\"data\": null}";
+            return json;
+        }
+        String json = "{\"code\":200,\"msg\":\"success\",\"data\":{\"number\":" + number + ",\"list\":[";
+        for (Movie vo : list) {
+            json += "{\"id\":" + vo.getId() + ", \"name\":\"" + vo.getName() +
+                    "\", \"show_time\":\"" + vo.getShowTime() +
+                    "\", \"create_time\":\"" + vo.getShowTime() +
+                    "\",\"hall\":" + vo.getHall() + ",\"description\":\"" +
+                    vo.getDescription() + "\"}";
+            if(vo == list.get(list.size()-1)){
                 json += "]";
+            } else {
+                json += ",";
             }
         }
-        json += "}";
+        json += "}}";
         return json;
     }
 
     public static String toOrderJson(List<Orders> list) {
         Integer number = list.size();
-        String json = "{\"number\": \"" + number + "\", \"data\": [";
+        String json = "{\"number\": " + number + ", \"data\": [";
         for (Orders order : list) {
             json +=  "{";
 

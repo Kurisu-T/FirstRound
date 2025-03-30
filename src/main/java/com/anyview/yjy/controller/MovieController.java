@@ -23,29 +23,34 @@ public class MovieController extends HttpServlet {
     OrderController orderController = new OrderController();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long userId = (Long) req.getSession().getAttribute("userId");
-        Long adminId = (Long) req.getSession().getAttribute("adminId");
-
-        if((userId == null && adminId == null) || (userId != null && adminId != null)) {
-            req.getSession().invalidate();
-            resp.sendRedirect("index.jsp");
+        String path = req.getPathInfo();
+        if(path.equals("/list")){
+            getMovieList(req, resp);
             return;
         }
-
-        if(userId != null && userId > 0) {
-            List<MovieVO> list = movieService.list();
-            String movieJSON = jsonUtils.toJson(list);
-            resp.getWriter().write(movieJSON);
-            req.setAttribute("movie", movieJSON);
-            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
-        }
-        else if(adminId != null && adminId > 0) {
-            List<Movie> list = movieService.listByAdmin();
-            String movieJSON = jsonUtils.toMovieJson(list);
-            resp.getWriter().write(movieJSON);
-            req.setAttribute("movie", movieJSON);
-            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
-        }
+//        Long userId = (Long) req.getSession().getAttribute("userId");
+//        Long adminId = (Long) req.getSession().getAttribute("adminId");
+//
+//        if((userId == null && adminId == null) || (userId != null && adminId != null)) {
+//            req.getSession().invalidate();
+//            resp.sendRedirect("index.jsp");
+//            return;
+//        }
+//
+//        if(userId != null && userId > 0) {
+//            List<MovieVO> list = movieService.list();
+//            String movieJSON = jsonUtils.toJson(list);
+//            resp.getWriter().write(movieJSON);
+//            req.setAttribute("movie", movieJSON);
+//            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
+//        }
+//        else if(adminId != null && adminId > 0) {
+//            List<Movie> list = movieService.listByAdmin();
+//            String movieJSON = jsonUtils.toMovieJson(list);
+//            resp.getWriter().write(movieJSON);
+//            req.setAttribute("movie", movieJSON);
+//            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
+//        }
     }
 
     @Override
@@ -62,7 +67,7 @@ public class MovieController extends HttpServlet {
 
         if((userId == null && adminId == null) || (userId != null && adminId != null)) {
             req.getSession().invalidate();
-            resp.sendRedirect("index.jsp");
+            resp.sendRedirect("index.html");
             return;
         }
 
@@ -85,6 +90,43 @@ public class MovieController extends HttpServlet {
             default:
                 req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
                 break;
+        }
+    }
+
+
+    /**
+     * 获取电影列表
+     * @param req
+     * @param resp
+     */
+    private void getMovieList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long userId = (Long) req.getSession().getAttribute("userId");
+        Long adminId = (Long) req.getSession().getAttribute("adminId");
+
+        if((userId == null && adminId == null) || (userId != null && adminId != null)) {
+            req.getSession().invalidate();
+            resp.getWriter().write(Result.error("获取用户信息失败"));
+            return;
+        }
+
+        if(userId != null && userId > 0) {
+            List<MovieVO> list = movieService.list();
+            String movieJSON = jsonUtils.toJson(list);
+            if(movieJSON.equals("error")){
+                resp.getWriter().write(Result.error("error"));
+                return;
+            }
+            System.out.println(movieJSON);
+            resp.getWriter().write(movieJSON);
+//            req.setAttribute("movie", movieJSON);
+//            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
+        }
+        else if(adminId != null && adminId > 0) {
+            List<Movie> list = movieService.listByAdmin();
+            String movieJSON = jsonUtils.toMovieJson(list);
+            resp.getWriter().write(movieJSON);
+//            req.setAttribute("movie", movieJSON);
+//            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
         }
     }
 

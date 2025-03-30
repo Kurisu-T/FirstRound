@@ -172,10 +172,9 @@ public class UserController extends HttpServlet {
         user.setPassword(password);
 
         UserLoginVO userVO = userService.login(user);
-
         if(userVO == null){
-            resp.getWriter().write(Result.error("登录失败"));
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(Result.error("手机号或密码错误"));
+//            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long userId = userVO.getId();
 

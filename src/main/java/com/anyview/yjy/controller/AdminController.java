@@ -175,8 +175,8 @@ public class AdminController extends HttpServlet {
 
         AdminLoginVO vo = adminService.login(admin);
         if(vo == null){
-            resp.getWriter().write(Result.error("登录失败"));
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(Result.error("手机号或密码错误"));
+//            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long adminId = vo.getId();
 

@@ -10,7 +10,7 @@
     <h2>管理员信息</h2>
     <p>管理员id: <span id="adminId"></span></p>
     <p>管理员名称: <input type="text" name="name" required></p>
-    <p>电话: <input type="text" name="phone" required></p>
+    <p>手机号: <input type="text" name="phone" required></p>
     <p>密码: <input type="text" name="password" required></p>
     <p><input type="submit" value="修改"></p>
 </form>
@@ -40,6 +40,8 @@
                     document.querySelector('input[name="name"]').value = admin.name || '';
                     document.querySelector('input[name="phone"]').value = admin.phone || '';
                     document.querySelector('input[name="password"]').value = admin.password || '';
+                } else {
+                    alert(`登录失败：${data.msg}`)
                 }
             })
             .catch(error => {

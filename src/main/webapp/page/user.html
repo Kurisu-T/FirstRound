@@ -10,10 +10,17 @@
     <h2>用户信息</h2>
     <p>用户id: <span id="userId"></span></p>
     <p>用户名: <input type="text" name="name" required></p>
-    <p>电话: <input type="text" name="phone" required></p>
+    <p>手机号: <input type="text" name="phone" required></p>
     <p>密码: <input type="text" name="password" required></p>
     <p><input type="submit" value="修改"></p>
 </form>
+
+<br>
+
+<from id="movieList">
+    <p><button type="button" name="movie">电影列表</button></p>
+    <pre id="jsonOutput"></pre>
+</from>
 
 <script>
     // 页面加载时获取用户数据
@@ -25,7 +32,7 @@
         })
             .then(response => {
                 // 处理401未授权
-                if (response.status === '500') {
+                if (response.status === '401') {
                     window.location.href = '/index.html';
                     return Promise.reject('未授权');
                 }
@@ -40,6 +47,8 @@
                     document.querySelector('input[name="name"]').value = user.name || '';
                     document.querySelector('input[name="phone"]').value = user.phone || '';
                     document.querySelector('input[name="password"]').value = user.password || '';
+                } else if (data && data.code === '500') {
+                    alert(`登录失败：${data?.msg || '未知错误'}`);
                 }
             })
             .catch(error => {
@@ -90,6 +99,23 @@
                 alert('请求失败，请检查网络');
             });
     });
+
+    document.getElementById('movieList').addEventListener('click', function() {
+        fetch('/movie/list', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            sessionStorage.setItem('movieData', JSON.stringify(data));
+            window.location.href = 'movieUser.html';
+        })
+        .catch(error => {
+            console.error('获取数据失败:', error);
+            alert('数据获取失败');
+        });
+    });
+
 </script>
 </body>
 </html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户端电影列表</title>
+</head>
+<body>
+
+    <h2>电影列表</h2>
+    <pre id="movieList"></pre>
+
+    <hr>
+    <form id="buyTicket">
+        <h4>购票</h4>
+        <div>
+            电影ID： <input type="text" name="moiveID" required>
+            <button type="submit" value="submitMovieID">购票</button>
+        </div>
+    </form>
+
+    <script>
+    window.addEventListener('load', function() {
+        const rawDataDiv = document.getElementById('movieList');
+        const storedData = sessionStorage.getItem('movieData');
+        
+        if(storedData) {
+            try {
+                const data = JSON.parse(storedData);
+                rawDataDiv.textContent = JSON.stringify(data, null, 2);
+            } catch(e) {
+                rawDataDiv.textContent = "数据格式错误";
+            }
+            sessionStorage.removeItem('movieData');
+        } else {
+            rawDataDiv.textContent = "没有找到电影数据，请返回重新获取";
+        }
+    });
+    </script>
+    
+</body>
+</html>
