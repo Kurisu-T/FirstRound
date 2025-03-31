@@ -51,29 +51,28 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: params,
-            credentials: 'include' // 携带Cookie
+            credentials: 'include'
         })
-            .then(response => {
-                // 处理未授权情况
-                if (response.status === 401) {
-                    window.location.href = '/page/movieUser.html';
-                    return Promise.reject('购票失败');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // 处理响应结果
-                if (data.code === '200') {
-                    alert('购票成功');
-                    window.location.href = '/page/userOrder.html'; // 可选刷新
-                } else {
-                    alert(`购票失败：${data.msg}`);
-                }
-            })
-            .catch(error => {
-                console.error('更新错误:', error);
-                alert('请求失败，请检查网络');
-            });
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '/page/movieUser.html';
+                return Promise.reject('购票失败');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.code === '200') {
+                alert('购票成功');
+                // 携带orderId跳转到支付页面
+                window.location.href = `/page/pay.html?orderId=${data.data}`;
+            } else {
+                alert(`购票失败：${data.msg}`);
+            }
+        })
+        .catch(error => {
+            console.error('更新错误:', error);
+            alert('请求失败，请检查网络');
+        });
     });
     </script>
     

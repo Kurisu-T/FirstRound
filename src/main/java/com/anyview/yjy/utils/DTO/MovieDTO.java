@@ -6,15 +6,16 @@ public class MovieDTO {
     private Long id;
     private Long hall;
     private LocalDateTime showTime;
-
+    private Integer price;
 
     public MovieDTO() {
     }
 
-    public MovieDTO(Long id, Long hall, LocalDateTime showTime) {
+    public MovieDTO(Long id, Long hall, LocalDateTime showTime, Integer price) {
         this.id = id;
         this.hall = hall;
         this.showTime = showTime;
+        this.price = price;
     }
 
     public Long getId() {
@@ -43,5 +44,13 @@ public class MovieDTO {
 
     public String toString() {
         return "movieDTO{id = " + id + ", hall = " + hall + ", showTime = " + showTime + "}";
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

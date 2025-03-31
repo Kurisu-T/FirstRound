@@ -13,17 +13,27 @@ public class Movie {
     private LocalDateTime showTime;
     private Long hall;
     private String description;
+    private Integer price;
 
     public Movie() {
     }
 
-    public Movie(Long id, String name, LocalDateTime createTime, LocalDateTime showTime, Long hall, String description) {
+    public Movie(Long id, String name, LocalDateTime createTime, LocalDateTime showTime, Long hall, String description, Integer price) {
         this.id = id;
         this.name = name;
         this.createTime = createTime;
         this.showTime = showTime;
         this.hall = hall;
         this.description = description;
+        this.price = price;
+    }
+
+    public String toString() {
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": " +
+                (createTime == null ? null : "\"" + TimeJSON.timeToJSON(createTime) + "\"") +
+                ", \"showTime\": " + (showTime == null ? null : "\"" + TimeJSON.timeToJSON(showTime) + "\"") +
+                ", \"hall\": " + hall + ", \"price\": " + price +
+                ", \"description\": " + (description == null ? null : "\"" + description + "\"") + "}";
     }
 
     public Long getId() {
@@ -74,11 +84,11 @@ public class Movie {
         this.description = description;
     }
 
-    public String toString() {
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": " +
-                (createTime == null ? null : "\"" + TimeJSON.timeToJSON(createTime) + "\"") +
-                ", \"showTime\": " + (showTime == null ? null : "\"" + TimeJSON.timeToJSON(showTime) + "\"") +
-                ", \"hall\": " + hall +
-                ", \"description\": " + (description == null ? null : "\"" + description + "\"") + "}";
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

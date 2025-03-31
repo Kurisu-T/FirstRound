@@ -5,17 +5,25 @@ public class User {
     private String name;
     private String phone;
     private String password;
+    private Integer money;
     private Integer status;
 
     public User() {
     }
 
-    public User(Long id, String name, String phone, String password, Integer status) {
+    public User(Long id, String name, String phone, String password, Integer money, Integer status) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.password = password;
+        this.money = money;
         this.status = status;
+    }
+
+    public String toString() {
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"phone\": \"" + phone +
+                "\", \"password\": \"" + password + "\", \"money\": " + money +
+                ", \"status\": " + status + "}";
     }
 
     public Long getId() {
@@ -58,8 +66,11 @@ public class User {
         this.status = status;
     }
 
-    public String toString() {
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"phone\": \"" + phone +
-                "\", \"password\": \"" + password + "\", \"status\": " + status + "}";
+    public Integer getMoney() {
+        return money;
+    }
+
+    public void setMoney(Integer money) {
+        this.money = money;
     }
 }

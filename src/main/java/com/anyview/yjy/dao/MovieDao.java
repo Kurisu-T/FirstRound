@@ -37,6 +37,7 @@ public class MovieDao {
                 vo.setId(rs.getLong("id"));
                 vo.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                 vo.setHall(rs.getLong("hall"));
+                vo.setPrice(rs.getInt("price"));
                 vo.setDescription(rs.getString("description"));
                 list.add(vo);
             }
@@ -73,6 +74,7 @@ public class MovieDao {
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                 movie.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 movie.setDescription(rs.getString("description"));
+                movie.setPrice(rs.getInt("price"));
                 list.add(movie);
 
             }
@@ -99,6 +101,7 @@ public class MovieDao {
             if (rs.next()) {
                 movie.setId(rs.getLong("id"));
                 movie.setHall(rs.getLong("hall"));
+                movie.setPrice(rs.getInt("price"));
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
             }
             return movie;

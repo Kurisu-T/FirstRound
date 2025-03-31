@@ -14,12 +14,12 @@ public class Orders {
     private LocalDateTime createTime;
     private LocalDateTime showTime;
     private Long status;
-
+    private Integer price;
 
     public Orders() {
     }
 
-    public Orders(Long id, Long userId, Long movie, Long hall, Long seat, LocalDateTime createTime, LocalDateTime showTime, Long status) {
+    public Orders(Long id, Long userId, Long movie, Long hall, Long seat, LocalDateTime createTime, LocalDateTime showTime, Long status, Integer price) {
         this.id = id;
         this.userId = userId;
         this.movie = movie;
@@ -28,6 +28,16 @@ public class Orders {
         this.createTime = createTime;
         this.showTime = showTime;
         this.status = status;
+        this.price = price;
+    }
+
+    public String toString() {
+        return "{\"id\":" + getId() + ",\"userId\":" + getUserId() +
+                ",\"movie\":" + getMovie() + ",\"hall\":" + getHall() +
+                ",\"seat\":" + getSeat() + ",\"price\":" + price +
+                ",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\",\"createTime\":\"" + TimeJSON.timeToJSON(getCreateTime()) +
+                "\",\"status\":\"" + getStatus() + "\"}";
     }
 
     public Long getId() {
@@ -94,12 +104,11 @@ public class Orders {
         this.status = status;
     }
 
-    public String toString() {
-        return "{\"id\":" + getId() + ",\"userId\":" + getUserId() +
-                ",\"movie\":" + getMovie() + ",\"hall\":" + getHall() +
-                ",\"seat\":" + getSeat() +
-                ",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
-                "\",\"createTime\":\"" + TimeJSON.timeToJSON(getCreateTime()) +
-                "\",\"status\":\"" + getStatus() + "\"}";
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

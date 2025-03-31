@@ -97,6 +97,7 @@ public class UserDao {
                 user.setName(rs.getString("name"));
                 user.setPhone(rs.getString("phone"));
                 user.setPassword(rs.getString("password"));
+                user.setMoney(rs.getInt("money"));
                 return user;
             }
 
@@ -112,7 +113,7 @@ public class UserDao {
      * @param user
      */
     public void update(User user) {
-        String sql = "update user set name = ?, phone = ?, password = ?, status = ? where id = ?";
+        String sql = "update user set name = ?, phone = ?, password = ?, status = ?, money = ? where id = ?";
         try {
             conn = DBconnection.getConnection();
 
@@ -121,7 +122,8 @@ public class UserDao {
             ps.setString(2, user.getPhone());
             ps.setString(3, user.getPassword());
             ps.setInt(4, user.getStatus());
-            ps.setLong(5, user.getId());
+            ps.setLong(5, user.getMoney());
+            ps.setLong(6, user.getId());
 
             ps.executeUpdate();
 
@@ -175,6 +177,7 @@ public class UserDao {
                 user.setName(rs.getString("name"));
                 user.setPhone(rs.getString("phone"));
                 user.setPassword(rs.getString("password"));
+                user.setMoney(rs.getInt("money"));
                 user.setStatus(rs.getInt("status"));
                 list.add(user);
             }

@@ -10,16 +10,25 @@ public class MovieVO {
     private LocalDateTime showTime;
     private Long hall;
     private String description;
+    private Integer price;
 
     public MovieVO() {
     }
 
-    public MovieVO(Long id, String name, LocalDateTime showTime, Long hall, String description) {
+    public MovieVO(Long id, String name, LocalDateTime showTime, Long hall, String description, Integer price) {
         this.id = id;
         this.name = name;
         this.showTime = showTime;
         this.hall = hall;
         this.description = description;
+        this.price = price;
+    }
+
+    public String toString() {
+        return "{\"id\":" + getId() + ",\"name\":\"" + getName() +
+                "\",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\", \"hall\":" + getHall() + ",\"description\":\"" + getDescription() + "\", " +
+                "\"price\":" + price + "}";
     }
 
     public Long getId() {
@@ -62,9 +71,11 @@ public class MovieVO {
         this.description = description;
     }
 
-    public String toString() {
-        return "{\"id\":" + getId() + ",\"name\":\"" + getName() +
-                "\",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
-                "\", \"hall\":" + getHall() + ",\"description\":\"" + getDescription() + "\"}";
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

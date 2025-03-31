@@ -5,10 +5,7 @@ import com.anyview.yjy.utils.DBconnection;
 import com.anyview.yjy.utils.DTO.MovieDTO;
 import com.anyview.yjy.utils.code;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +44,7 @@ public class OrderDao {
                     order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                     order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                     order.setStatus(rs.getLong("status"));
+                    order.setPrice(rs.getInt("price"));
                     list.add(order);
                 }
 
@@ -55,7 +53,7 @@ public class OrderDao {
             }
 
         } else if(userId != null) {
-            String sql = "select id, movie, hall, seat, show_time, status, create_time from orders where user_id = ?";
+            String sql = "select id, movie, hall, seat, show_time, status, create_time, price from orders where user_id = ?";
 //            System.out.println("Test of user order " + userId);
             try {
                 conn = DBconnection.getConnection();
@@ -75,6 +73,7 @@ public class OrderDao {
                     order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                     order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                     order.setStatus(rs.getLong("status"));
+                    order.setPrice(rs.getInt("price"));
                     list.add(order);
                 }
 
@@ -93,15 +92,14 @@ public class OrderDao {
      * @param seatId
      * @return
      */
-    public Long add(Long userId, Long movieId, Long seatId) {
+    public Integer add(Long userId, Long movieId, Long seatId) {
 
         if(userId == null || movieId == null || seatId == null) {
             return BUY_FAIL;
         }
 
-        String sql = "insert into orders(user_id, movie, hall, seat, show_time, create_time, status) values(?,?,?,?,?,?,?)";
+        String sql = "insert into orders(user_id, movie, hall, seat, show_time, create_time, status, price) values(?,?,?,?,?,?,?,?)";
         MovieDTO movie = movieDao.getById(movieId);
-        System.out.println(movie);
         // 电影不存在
         if(movie.getId() == null) {
             return MOVIE_NO_FIND;
@@ -121,11 +119,11 @@ public class OrderDao {
         order.setSeat(seatId);
         order.setShowTime(movie.getShowTime());
         order.setCreateTime(LocalDateTime.now());
-
+        order.setPrice(movie.getPrice());
         order.setStatus(ORDER_UNPAID); // 订单状态未支付
 
         try {
-            ps = conn.prepareStatement(sql);
+            ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, order.getUserId());
             ps.setLong(2, order.getMovie());
             ps.setLong(3, order.getHall());
@@ -133,11 +131,14 @@ public class OrderDao {
             ps.setString(5,order.getShowTime().toString());
             ps.setString(6,order.getCreateTime().toString());
             ps.setLong(7, order.getStatus());
-
-            if(ps.executeUpdate() > 0) {
-                return BUY_SUCCESS;
+            ps.setLong(8, order.getPrice());
+            ps.executeUpdate();
+            rs = ps.getGeneratedKeys();
+            if(rs.next()) {
+                return rs.getInt(1);
+            } else {
+                return BUY_FAIL;
             }
-            return BUY_FAIL;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -197,11 +198,42 @@ public class OrderDao {
                 order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                 order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 order.setStatus(rs.getLong("status"));
+                order.setPrice(rs.getInt("price"));
                 list.add(order);
             }
             return list;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 获取订单详细
+     * @param orderId
+     * @return
+     */
+    public Orders getById(Long orderId) {
+        String sql = "select * from orders where id = ?";
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, orderId);
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                Orders order = new Orders();
+                order.setUserId(rs.getLong("user_id"));
+                order.setMovie(rs.getLong("movie"));
+                order.setHall(rs.getLong("hall"));
+                order.setSeat(rs.getLong("seat"));
+                order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                order.setStatus(rs.getLong("status"));
+                order.setPrice(rs.getInt("price"));
+                order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
+                return order;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }

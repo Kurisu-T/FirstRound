@@ -119,9 +119,11 @@ public class UserController extends HttpServlet {
         String name = req.getParameter("name");
         String phone = req.getParameter("phone");
         String password = req.getParameter("password");
+        Integer money = Integer.valueOf(req.getParameter("money"));
 
         user.setName(name);
         user.setPhone(phone);
+        user.setMoney(money);
         user.setPassword(password);
         user.setStatus(1);
 

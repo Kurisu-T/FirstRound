@@ -4,6 +4,7 @@ import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.utils.jsonUtils;
 import com.anyview.yjy.utils.result.MyResult;
+import com.mysql.cj.x.protobuf.MysqlxCrud;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.anyview.yjy.utils.code.*;
 
 @WebServlet("/order/*")
 public class OrderController extends HttpServlet {
@@ -38,6 +41,9 @@ public class OrderController extends HttpServlet {
             case "/manage":
                 adminOrderList(req, resp, userId, adminId);
                 break;
+            case "/detail":
+                getDetail(req, resp);
+                break;
             default:
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
@@ -53,6 +59,7 @@ public class OrderController extends HttpServlet {
 //        }
     }
 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
@@ -65,11 +72,43 @@ public class OrderController extends HttpServlet {
             case "/buy":
                 buyTicket(req, resp);
                 break;
+            case "pay":
+                pay(req, resp);
+                break;
             default:
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
 
+    }
+
+    /**
+     * 支付订单
+     * @param req
+     * @param resp
+     */
+    private void pay(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long UserId = (Long) req.getSession().getAttribute("userId");
+        Long orderId = Long.parseLong(req.getParameter("orderId"));
+        if(UserId == null || orderId == null) {
+            resp.getWriter().write(MyResult.error("订单或用户信息有误"));
+        }
+
+    }
+
+    /**
+     * 获取订单详细
+     * @param req
+     * @param resp
+     */
+    private void getDetail(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long orderId = Long.parseLong(req.getParameter("orderId"));
+        Orders order = orderService.getById(orderId);
+        if(order == null) {
+            resp.getWriter().write(MyResult.error("未查询到订单信息"));
+        } else {
+            resp.getWriter().write(MyResult.success(order));
+        }
     }
 
     /**
@@ -117,21 +156,17 @@ public class OrderController extends HttpServlet {
         Long movieId = Long.parseLong(req.getParameter("movieId"));
         Long seatId = Long.parseLong(req.getParameter("seatId"));
 
-        Long number = orderService.add(userId, movieId, seatId);
+        Integer number = orderService.add(userId, movieId, seatId);
 
-        switch (number.toString()) {
-            case "0":
-                resp.getWriter().write(MyResult.error("电影信息未找到"));
-                break;
-            case "1":
-                resp.getWriter().write(MyResult.error("座位已被占用"));
-                break;
-            case "2":
-                resp.getWriter().write(MyResult.success());
-                break;
-            default:
-                resp.getWriter().write(MyResult.error("未知错误"));
-                break;
+        if(number.equals(MOVIE_NO_FIND)) {
+            resp.getWriter().write(MyResult.error("电影信息未找到"));
+        } else if(number.equals(SEAT_NOT_NULL)) {
+            resp.getWriter().write(MyResult.error("座位已被占用"));
+        } else if(number.equals(BUY_FAIL)) {
+            resp.getWriter().write(MyResult.error("未知错误"));
+        } else {
+            System.out.println(MyResult.success(number));
+            resp.getWriter().write(MyResult.success(number));
         }
 
 //        if(number > 0) {

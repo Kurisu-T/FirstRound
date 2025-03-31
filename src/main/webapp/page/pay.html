@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付页面</title>
+</head>
+<body>
+    <h3>订单详细</h3>
+    <pre id="orderData"></pre>
+    <p><button type="button" id="pay">支付</button></p>
+
+    <script>
+        window.addEventListener('load', function() {
+            // 从URL中提取orderId
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            if (orderId) {
+                // 发送获取订单详情的请求
+                fetch(`/order/detail?orderId=${orderId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.code === '500') {
+                        console.error('获取订单失败', error);
+                        window.location.href = '/index.html';
+                        return;
+                    }
+                    const displayDiv = document.getElementById('orderData');
+                    console.log(document.getElementById('orderData'));
+                    if(data && data.code === '200') {
+                        displayDiv.textContent = JSON.stringify(data, null, 2);
+                    } else {
+                        displayDiv.textContent = data?.msg || '获取订单信息失败';
+                    }
+                })
+                .catch(error => {
+                    console.error('获取订单失败:', error);
+                });
+            } else {
+                console.error("URL中缺少orderId参数");
+            }
+        });
+
+        document.getElementById('payButton').addEventListener('click', function() {
+            if (!orderId) return;
+
+            fetch('/order/pay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `orderId=${orderId}`,
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    alert('请先登录');
+                    window.location.href = '/page/login.html';
+                    return Promise.reject();
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.code === '200') {
+                    alert('支付成功');
+                    window.location.href = `/page/userOrder.html`;
+                } else {
+                    alert(`支付失败：${data.msg}`);
+                }
+            })
+            .catch(error => {
+                if (!error) return; // 排除已处理的跳转错误
+                console.error('支付错误:', error);
+                alert('支付请求失败，请检查网络');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -23,7 +23,7 @@ public class OrderService {
      * @param seatId
      * @return
      */
-    public Long add(Long userId, Long movieId,Long seatId) {
+    public Integer add(Long userId, Long movieId,Long seatId) {
         return orderDao.add(userId, movieId, seatId);
     }
 
@@ -33,5 +33,15 @@ public class OrderService {
      */
     public List<Orders> getAll() {
         return orderDao.getAll();
+    }
+
+    /**
+     * 获取订单详细
+     *
+     * @param orderId
+     * @return
+     */
+    public Orders getById(Long orderId) {
+        return orderDao.getById(orderId);
     }
 }

@@ -12,6 +12,7 @@
     <p>用户名: <input type="text" name="name" required></p>
     <p>手机号: <input type="text" name="phone" required></p>
     <p>密码: <input type="text" name="password" required></p>
+    <p>余额：<input type="text" name="money" required></p>
     <p><input type="submit" value="修改"></p>
 </form>
 
@@ -51,6 +52,7 @@
                     document.querySelector('input[name="name"]').value = user.name || '';
                     document.querySelector('input[name="phone"]').value = user.phone || '';
                     document.querySelector('input[name="password"]').value = user.password || '';
+                    document.querySelector('input[name="money"]').value = user.money || '0';
                 } else if (data && data.code === '500') {
                     alert(`登录失败：${data?.msg || '未知错误'}`);
                 }
