@@ -76,7 +76,7 @@ public class Movie {
 
     public String toString() {
         return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": \"" +
-                TimeJSON.timeToJSON(createTime) +
+                (createTime == null ? null : TimeJSON.timeToJSON(createTime)) +
                 "\", \"showTime\": \"" + TimeJSON.timeToJSON(showTime) +
                 "\", \"hall\": " + hall + ", \"description\": \"" + description + "\"}";
     }

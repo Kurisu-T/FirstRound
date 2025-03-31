@@ -3,8 +3,11 @@ package com.anyview.yjy.controller;
 import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
+import com.anyview.yjy.utils.DataUtils.ParseData;
+import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 import com.anyview.yjy.utils.result.MyResult;
+import com.anyview.yjy.utils.result.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,8 +15,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/movie/*")
 public class MovieController extends HttpServlet {
@@ -91,15 +96,29 @@ public class MovieController extends HttpServlet {
             case "/update":
                 getMovieById(req, resp);
                 break;
-            case "/modify":
-                update(req, resp);
-                break;
             default:
                 req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
                 break;
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Long adminId = (Long) req.getSession().getAttribute("adminId");
+        if(adminId == null) {
+            resp.getWriter().write(Result.error("权限不足"));
+            return;
+        }
+
+        String path = req.getPathInfo();
+        System.out.println(path);
+        if(path.startsWith("/modify/")) {
+            update(req, resp);
+        }
+        else {
+            resp.getWriter().write(Result.error("域名错误"));
+        }
+    }
 
     /**
      * 获取电影列表
@@ -161,7 +180,7 @@ public class MovieController extends HttpServlet {
 //        System.out.println(movieUpdateId);
         Long movieId = Long.parseLong(movieUpdateId);
         Movie movie = movieService.adminGetById(movieId);
-        System.out.println(movie);
+//        System.out.println(movie);
         req.removeAttribute("movie");
 //        req.setAttribute("movie", movie);
         resp.getWriter().write(MyResult.success(movie));
@@ -173,41 +192,45 @@ public class MovieController extends HttpServlet {
      * @param resp
      */
     private void update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String path = req.getPathInfo();
+        Long movieId = Long.parseLong(path.split("/")[2]);
 
-        Long adminId =(Long) req.getAttribute("adminId");
+        Map<String, Object> data = ParseData.getData(req);
 
-        if(adminId == null) {
-            try {
-                resp.getWriter().write(MyResult.error("权限不足"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return;
-        }
+        String name = (String) data.get("name");
+        Long hall = Long.parseLong((String) data.get("hall"));
+        String dateTime = (String) data.get("showTime");
+        LocalDateTime showTime = TimeJSON.JSONtoTime(dateTime);
+        String description = (String) data.get("description");
 
-        Long movieId = Long.parseLong(req.getParameter("id"));
-        String movieName = req.getParameter("name");
-        Long hall = Long.parseLong(req.getParameter("hall"));
-        LocalDateTime showTime = LocalDateTime.parse(req.getParameter("show_time"));
-        String description = req.getParameter("description");
+
+//        String movieName = req.getParameter("name");
+//        Long hall = Long.parseLong(req.getParameter("hall"));
+//        System.out.println("get hall ok");
+//        LocalDateTime showTime = LocalDateTime.parse(req.getParameter("showTime"));
+//        System.out.println("get show time ok");
+//        String description = req.getParameter("description");
+//        System.out.println("get description ok");
 
         Movie movie = new Movie();
         movie.setId(movieId);
-        movie.setName(movieName);
+        movie.setName(name);
         movie.setHall(hall);
         movie.setShowTime(showTime);
         movie.setDescription(description);
+
         movieService.update(movie);
 //        req.removeAttribute("movie");
 //        resp.getWriter().write(jsonUtils.toJson(movie));
+        System.out.println(MyResult.success(movie));
         resp.getWriter().write(MyResult.success(movie));
-        try {
-            doGet(req, resp);
-        } catch (ServletException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            doGet(req, resp);
+//        } catch (ServletException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**

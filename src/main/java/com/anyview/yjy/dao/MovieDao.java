@@ -154,8 +154,6 @@ public class MovieDao {
             ps.setString(4, movie.getDescription());
             ps.setLong(5, movie.getId());
 
-            System.out.println("arrive here ??????");
-
             ps.executeUpdate();
 
         } catch (SQLException e) {
