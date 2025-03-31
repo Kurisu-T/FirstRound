@@ -243,7 +243,6 @@ public class AdminController extends HttpServlet {
      */
     private void getMovieList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Movie> list = movieService.listByAdmin();
-        System.out.println(MyResult.success(list));
         resp.getWriter().write(MyResult.success(list));
     }
 }

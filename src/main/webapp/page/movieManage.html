@@ -47,11 +47,8 @@
                 if (data.code === '200') {
                     // 填充表单
                     document.getElementById('name').value = data.data.name || '';
-                    const showTime = data.data.show_time ?
-                        data.data.show_time.replace(' ', 'T').substr(0, 16) : '';
-                    document.getElementById('show_time').value = showTime;
-                    document.getElementById('show_time').value = data.data.show_time;
-                    document.getElementById('hall').value = data.data.hall || '';
+                    document.getElementById('show_time').value = data.data.showTime || '';
+                    document.getElementById('hall').value = data.data.hall || '0';
                     document.getElementById('description').value = data.data.description || '';
                 } else {
                     alert(`获取失败：${data.msg}`);
