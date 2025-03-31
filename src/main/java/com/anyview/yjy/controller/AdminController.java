@@ -9,10 +9,12 @@ import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.AdminLoginDTO;
+import com.anyview.yjy.utils.DataUtils.ParseData;
 import com.anyview.yjy.utils.VO.AdminLoginVO;
 import com.anyview.yjy.utils.VO.AdminRegisterVO;
 import com.anyview.yjy.utils.jsonUtils;
 import com.anyview.yjy.utils.result.MyResult;
+import com.mysql.cj.callback.MysqlCallback;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,6 +24,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/admin/*")
 public class AdminController extends HttpServlet {
@@ -94,6 +97,41 @@ public class AdminController extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        switch (path){
+            case "/updateStatus":
+                updateUserStatus(req, resp);
+                break;
+            default:
+                resp.getWriter().write(MyResult.error("域名错误"));
+                break;
+        }
+    }
+
+    /**
+     * 更改用户状态
+     * @param req
+     * @param resp
+     */
+    private void updateUserStatus(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Map<String, Object> data = ParseData.getData(req);
+        Long userId = Long.parseLong(data.get("userId").toString());
+        Integer status = Integer.parseInt(data.get("status").toString());
+
+        User user = userService.getById(userId);
+        if(user == null){
+            resp.getWriter().write(MyResult.error("用户信息不存在"));
+            return;
+        }
+
+        user.setStatus(status);
+        userService.update(user);
+
+        resp.getWriter().write(MyResult.success());
     }
 
     /**

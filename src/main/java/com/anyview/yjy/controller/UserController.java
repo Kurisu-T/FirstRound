@@ -123,6 +123,7 @@ public class UserController extends HttpServlet {
         user.setName(name);
         user.setPhone(phone);
         user.setPassword(password);
+        user.setStatus(1);
 
         if(user.getName().isEmpty() || user.getPhone().isEmpty() || user.getPassword().isEmpty()){
             resp.getWriter().write(MyResult.error("修改失败"));

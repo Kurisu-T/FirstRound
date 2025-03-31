@@ -9,6 +9,15 @@
     <h2>用户列表</h2>
     <pre id="userData"></pre>
 
+    <hr>
+
+    <form id="userStatus">
+        <p><h3>更改用户状态</h3></p>
+        <p>用户id：<input type="text" id="userId" required></p>
+        <button type="button" id="ban">加入黑名单</button>
+        <button type="button" id="notBan">移除黑名单</button>
+    </form>
+
     <script>
         window.addEventListener('load', function() {
             fetch('/admin/userList', {
@@ -40,6 +49,64 @@
                 document.getElementById('userData').textContent = '数据加载失败';
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 通用请求函数
+            const sendStatusRequest = (status) => {
+                const userId = document.getElementById('userId').value.trim();
+                
+                // 验证输入
+                if (!userId) {
+                    alert('请输入用户ID');
+                    return;
+                }
+
+                // 构造请求数据
+                const requestData = {
+                    userId: userId,
+                    status: status
+                };
+
+                // 发送请求（假设接口为 POST /user/updateStatus）
+                fetch('/admin/updateStatus', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // 携带 Cookie
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('网络响应异常');
+                })
+                .then(data => {
+                    if (data.code === '200') {
+                        alert(status === 0 ? '已加入黑名单' : '已移除黑名单');
+                        document.getElementById('userId').value = ''; // 清空输入框
+                        window.location.reload();
+                    } else {
+                        alert(`操作失败：${data.msg}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('请求失败:', error);
+                    alert('请求发送失败，请检查控制台');
+                });
+            };
+
+            // 绑定按钮事件
+            document.getElementById('ban').addEventListener('click', () => {
+                sendStatusRequest(0); // 状态码 0
+            });
+
+            document.getElementById('notBan').addEventListener('click', () => {
+                sendStatusRequest(1); // 状态码 1
+            });
+        });
+
     </script>
 </body>
 </html>

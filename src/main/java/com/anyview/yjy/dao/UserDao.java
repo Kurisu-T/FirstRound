@@ -112,7 +112,7 @@ public class UserDao {
      * @param user
      */
     public void update(User user) {
-        String sql = "update user set name = ?, phone = ?, password = ? where id = ?";
+        String sql = "update user set name = ?, phone = ?, password = ?, status = ? where id = ?";
         try {
             conn = DBconnection.getConnection();
 
@@ -120,7 +120,8 @@ public class UserDao {
             ps.setString(1, user.getName());
             ps.setString(2, user.getPhone());
             ps.setString(3, user.getPassword());
-            ps.setLong(4, user.getId());
+            ps.setInt(4, user.getStatus());
+            ps.setLong(5, user.getId());
 
             ps.executeUpdate();
 
