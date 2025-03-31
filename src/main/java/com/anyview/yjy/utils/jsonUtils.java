@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// 调用 Jackson json处理器（已弃用）
 public class jsonUtils {
 
     /**

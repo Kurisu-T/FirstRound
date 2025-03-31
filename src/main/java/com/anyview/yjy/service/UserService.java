@@ -53,10 +53,19 @@ public class UserService {
         userDao.update(user);
     }
 
+    /**
+     * 根据手机号获取用户信息
+     * @param phone
+     * @return
+     */
     public UserLoginVO getByPhone(String phone) {
         return userDao.getByPhone(phone);
     }
 
+    /**
+     * 获取用户列表
+     * @return
+     */
     public List<User> list() {
         return userDao.list();
     }

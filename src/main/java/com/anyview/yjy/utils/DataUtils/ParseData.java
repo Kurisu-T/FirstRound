@@ -9,6 +9,11 @@ import java.util.Map;
 
 public class ParseData {
 
+    /**
+     * 获取前端发送的 JSON 数据
+     * @param request
+     * @return
+     */
     public static Map<String, Object>getData(HttpServletRequest request){
         ObjectMapper mapper = new ObjectMapper();
         try {

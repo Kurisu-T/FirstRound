@@ -125,6 +125,11 @@ public class AdminDao {
 
     }
 
+    /**
+     * 登陆后返回基础信息
+     * @param phone
+     * @return
+     */
     public AdminLoginVO getByPhone(String phone) {
         AdminLoginVO vo = new AdminLoginVO();
         String sql = "select id, name from admin where phone = ?";

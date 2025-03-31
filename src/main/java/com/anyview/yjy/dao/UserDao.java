@@ -129,6 +129,11 @@ public class UserDao {
         }
     }
 
+    /**
+     * 通过手机号获取用户信息
+     * @param phone
+     * @return
+     */
     public UserLoginVO getByPhone(String phone) {
         String sql = "select * from user where phone = ?";
 
@@ -152,6 +157,10 @@ public class UserDao {
         return null;
     }
 
+    /**
+     * 获取所用用户信息
+     * @return
+     */
     public List<User> list() {
         String sql = "select * from user";
         List<User> list = new ArrayList<User>();

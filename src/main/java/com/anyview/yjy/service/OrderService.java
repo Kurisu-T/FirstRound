@@ -27,6 +27,10 @@ public class OrderService {
         return orderDao.add(userId, movieId, seatId);
     }
 
+    /**
+     * 获取所有订单信息
+     * @return
+     */
     public List<Orders> getAll() {
         return orderDao.getAll();
     }

@@ -2,21 +2,14 @@ package com.anyview.yjy.utils.result;
 
 import com.anyview.yjy.utils.jsonUtils;
 
+/**
+ * 调用 Jackson 的返回结果统一封装类（已弃用）
+ * @param <T>
+ */
 public class Result<T> {
     private String code;
     private String msg;
     private Object data;
-
-//    public String toJson(Result res) {
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        try {
-//            return mapper.writeValueAsString(res);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//        return "{\"code\":\"" + 500 + "\",\"msg\":\"" + "json 转化失败" + "\"}";
-//    }
 
     public static String success() {
         Result result = new Result();

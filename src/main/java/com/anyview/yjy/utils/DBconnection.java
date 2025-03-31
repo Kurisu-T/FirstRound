@@ -17,10 +17,21 @@ public class DBconnection {
         }
     }
 
+    /**
+     * 获取数据库链接对象
+     * @return
+     * @throws SQLException
+     */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, userName, password);
     }
 
+    /**
+     * 关闭数据库链接
+     * @param conn
+     * @param ps
+     * @param rs
+     */
     public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
         if(rs != null) {
             try {

@@ -44,20 +44,6 @@ public class UserController extends HttpServlet {
         req.getRequestDispatcher("/user.html").forward(req, resp);
     }
 
-    private void getById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Long userId = (Long) req.getSession().getAttribute("userId");
-        if(userId == null){
-            resp.getWriter().write(MyResult.error("未登录"));
-            return;
-        }
-        User user = userService.getById(userId);
-        if(user == null){
-            resp.getWriter().write(MyResult.error("用户不存在"));
-            return;
-        }
-        resp.getWriter().write(MyResult.success(user));
-    }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -82,6 +68,27 @@ public class UserController extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
+    }
+
+
+    /**
+     * 登录成功后展示用户信息
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
+    private void getById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long userId = (Long) req.getSession().getAttribute("userId");
+        if(userId == null){
+            resp.getWriter().write(MyResult.error("未登录"));
+            return;
+        }
+        User user = userService.getById(userId);
+        if(user == null){
+            resp.getWriter().write(MyResult.error("用户不存在"));
+            return;
+        }
+        resp.getWriter().write(MyResult.success(user));
     }
 
     /**
