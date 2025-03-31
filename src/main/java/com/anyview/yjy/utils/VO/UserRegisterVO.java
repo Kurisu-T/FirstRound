@@ -29,6 +29,6 @@ public class UserRegisterVO {
     }
 
     public String toString() {
-        return "UserRegisterVO{name = " + name + ", phone = " + phone + "}";
+        return "{\"name\": \"" + name + "\", \"phone\": \"" + phone + "\"}";
     }
 }

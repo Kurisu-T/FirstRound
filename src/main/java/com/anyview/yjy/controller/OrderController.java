@@ -3,7 +3,7 @@ package com.anyview.yjy.controller;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.utils.jsonUtils;
-import com.anyview.yjy.utils.result.Result;
+import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,7 +23,7 @@ public class OrderController extends HttpServlet {
 
         if((userId == null && adminId == null) || (userId != null && adminId != null)) {
             req.getSession().invalidate();
-            resp.getWriter().write(Result.error("请尝试重新登录"));
+            resp.getWriter().write(MyResult.error("请尝试重新登录"));
             return;
         }
 
@@ -39,7 +39,7 @@ public class OrderController extends HttpServlet {
                 adminOrderList(req, resp, userId, adminId);
                 break;
             default:
-                resp.getWriter().write(Result.error("域名错误"));
+                resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
 
@@ -57,7 +57,7 @@ public class OrderController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
         if(path == null || path.equals("")) {
-            resp.getWriter().write(Result.error("未知错误"));
+            resp.getWriter().write(MyResult.error("未知错误"));
             return;
         }
 
@@ -66,7 +66,7 @@ public class OrderController extends HttpServlet {
                 buyTicket(req, resp);
                 break;
             default:
-                resp.getWriter().write(Result.error("域名错误"));
+                resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
 
@@ -82,8 +82,7 @@ public class OrderController extends HttpServlet {
      */
     private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
-        String json = jsonUtils.toOrderJson(list);
-        resp.getWriter().write(json);
+        resp.getWriter().write(MyResult.success(list.toString()));
 //        req.setAttribute("orders", json);
     }
 
@@ -97,7 +96,7 @@ public class OrderController extends HttpServlet {
     private void adminOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
 //        String json = jsonUtils.toOrderJson(list);
-        resp.getWriter().write(Result.success(list));
+        resp.getWriter().write(MyResult.success(list));
     }
 
 
@@ -111,7 +110,7 @@ public class OrderController extends HttpServlet {
         Long userId = (Long) req.getSession().getAttribute("userId");
 
         if(userId == null) {
-            resp.getWriter().write(Result.error("请先登录"));
+            resp.getWriter().write(MyResult.error("请先登录"));
             return;
         }
 
@@ -122,25 +121,25 @@ public class OrderController extends HttpServlet {
 
         switch (number.toString()) {
             case "0":
-                resp.getWriter().write(Result.error("电影信息未找到"));
+                resp.getWriter().write(MyResult.error("电影信息未找到"));
                 break;
             case "1":
-                resp.getWriter().write(Result.error("座位已被占用"));
+                resp.getWriter().write(MyResult.error("座位已被占用"));
                 break;
             case "2":
-                resp.getWriter().write(Result.success());
+                resp.getWriter().write(MyResult.success());
                 break;
             default:
-                resp.getWriter().write(Result.error("未知错误"));
+                resp.getWriter().write(MyResult.error("未知错误"));
                 break;
         }
 
 //        if(number > 0) {
-//            resp.getWriter().write(Result.success());
+//            resp.getWriter().write(MyResult.success());
 //        } else if (number == -1){
-//            resp.getWriter().write(Result.error("请更换座位号"));
+//            resp.getWriter().write(MyResult.error("请更换座位号"));
 //        } else {
-//            resp.getWriter().write(Result.error("购票失败"));
+//            resp.getWriter().write(MyResult.error("购票失败"));
 //        }
     }
 }

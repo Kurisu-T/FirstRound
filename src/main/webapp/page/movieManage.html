@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑电影信息</title>
+</head>
+<body>
+    <form id="updateForm">
+        <h2>电影信息</h2>
+        <p>电影id: <span id="movieId"></span></p>
+        <p>电影名: <input type="text" id="name" name="name" required></p>
+        <p>放映时间: <input type="datetime-local" id="show_time" name="show_time" required></p>
+        <p>放映厅: <input type="text" id="hall" name="hall" required></p>
+        <p>描述: <input type="text" id="description" name="description" required></p>
+        <p><input type="submit" value="修改"></p>
+    </form>
+
+    <script>
+        window.addEventListener('load', function() {
+            // 解析URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('movieId');
+
+            if (!movieId) {
+                alert('缺少电影ID参数');
+                window.history.back();
+                return;
+            }
+
+            // 显示电影ID
+            document.getElementById('movieId').textContent = movieId;
+
+            // 获取电影详情
+            fetch(`/movie/info?movieId=${encodeURIComponent(movieId)}`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '/index.html';
+                    return Promise.reject('未授权');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.code === '200') {
+                    // 填充表单
+                    document.getElementById('name').value = data.data.name || '';
+                    const showTime = data.data.show_time ?
+                        data.data.show_time.replace(' ', 'T').substr(0, 16) : '';
+                    document.getElementById('show_time').value = showTime;
+                    document.getElementById('show_time').value = data.data.show_time;
+                    document.getElementById('hall').value = data.data.hall || '';
+                    document.getElementById('description').value = data.data.description || '';
+                } else {
+                    alert(`获取失败：${data.msg}`);
+                    window.history.back();
+                }
+            })
+            .catch(error => {
+                console.error('请求失败:', error);
+                alert('数据加载失败');
+                window.history.back();
+            });
+        });
+    </script>
+</body>
+</html>

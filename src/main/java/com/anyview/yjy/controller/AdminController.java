@@ -12,7 +12,7 @@ import com.anyview.yjy.utils.DTO.AdminLoginDTO;
 import com.anyview.yjy.utils.VO.AdminLoginVO;
 import com.anyview.yjy.utils.VO.AdminRegisterVO;
 import com.anyview.yjy.utils.jsonUtils;
-import com.anyview.yjy.utils.result.Result;
+import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -62,7 +62,7 @@ public class AdminController extends HttpServlet {
                 getMovieList(req, resp);
                 break;
             default:
-                resp.getWriter().write(Result.error("域名错误"));
+                resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
 
@@ -105,15 +105,15 @@ public class AdminController extends HttpServlet {
     private void getById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long adminId = (Long) req.getSession().getAttribute("adminId");
         if(adminId == null){
-            resp.getWriter().write(Result.error("未登录"));
+            resp.getWriter().write(MyResult.error("未登录"));
             return;
         }
         Admin admin = adminService.getById(adminId);
         if(admin == null){
-            resp.getWriter().write(Result.error("管理员不存在"));
+            resp.getWriter().write(MyResult.error("管理员不存在"));
             return;
         }
-        resp.getWriter().write(Result.success(admin));
+        resp.getWriter().write(MyResult.success(admin));
     }
 
     /**
@@ -136,7 +136,7 @@ public class AdminController extends HttpServlet {
         Long adminId = (Long) req.getSession().getAttribute("adminId");
         Admin admin = adminService.getById(adminId);
         if(admin == null){
-            resp.getWriter().write(Result.error("管理员不存在"));
+            resp.getWriter().write(MyResult.error("管理员不存在"));
             return ;
         }
 
@@ -149,12 +149,12 @@ public class AdminController extends HttpServlet {
         admin.setPassword(password);
 
         if(admin.getName().isEmpty() || admin.getPhone().isEmpty() || admin.getPassword().isEmpty()){
-            resp.getWriter().write(Result.error("修改失败"));
+            resp.getWriter().write(MyResult.error("修改失败"));
             return;
         } else {
             adminService.update(admin);
             req.getSession().setAttribute("adminId", admin.getId());
-            resp.getWriter().write(Result.success());
+            resp.getWriter().write(MyResult.success());
         }
 //        resp.getWriter().write(jsonUtils.toJson(admin));
 //        resp.sendRedirect("/admin");
@@ -173,7 +173,7 @@ public class AdminController extends HttpServlet {
         String password = req.getParameter("password");
 
         if(adminService.getByPhone(phone) != null) {
-            resp.getWriter().write(Result.error("管理员已存在"));
+            resp.getWriter().write(MyResult.error("管理员已存在"));
             return;
         }
 
@@ -183,7 +183,7 @@ public class AdminController extends HttpServlet {
 
         AdminRegisterVO vo = adminService.register(admin);
 
-        resp.getWriter().write(vo == null ? Result.error("注册失败") : Result.success(vo));
+        resp.getWriter().write(vo == null ? MyResult.error("注册失败") : MyResult.success(vo));
 //        resp.sendRedirect("/");
     }
 
@@ -203,7 +203,7 @@ public class AdminController extends HttpServlet {
 
         AdminLoginVO vo = adminService.login(admin);
         if(vo == null){
-            resp.getWriter().write(Result.error("手机号或密码错误"));
+            resp.getWriter().write(MyResult.error("手机号或密码错误"));
 //            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long adminId = vo.getId();
@@ -211,7 +211,7 @@ public class AdminController extends HttpServlet {
             req.getSession().invalidate();
             req.getSession().setAttribute("adminId", adminId);
 
-            resp.getWriter().write(Result.success(vo));
+            resp.getWriter().write(MyResult.success(vo));
 //            resp.sendRedirect("/admin");
         }
     }
@@ -223,7 +223,7 @@ public class AdminController extends HttpServlet {
      */
     private void getUserList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<User> list = userService.list();
-        resp.getWriter().write(Result.success(list));
+        resp.getWriter().write(MyResult.success(list));
     }
 
     /**
@@ -233,7 +233,7 @@ public class AdminController extends HttpServlet {
      */
     private void getOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders>list = orderService.list(userId, adminId);
-        resp.getWriter().write(Result.success(list));
+        resp.getWriter().write(MyResult.success(list));
     }
 
     /**
@@ -243,6 +243,7 @@ public class AdminController extends HttpServlet {
      */
     private void getMovieList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Movie> list = movieService.listByAdmin();
-        resp.getWriter().write(Result.success(list));
+        System.out.println(MyResult.success(list));
+        resp.getWriter().write(MyResult.success(list));
     }
 }

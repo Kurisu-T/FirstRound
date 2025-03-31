@@ -9,6 +9,13 @@
     <h3>电影管理</h3>
     <pre id="movieData"></pre>
 
+    <hr>
+    <form id="manageMovie">
+        <p><h5>编辑电影信息</h5></p>
+        电影id：<input type="text" id="movieId" required>
+        <button type="button" id="goToManage">确定</button>
+    </form>
+
     <script>
         window.addEventListener('load', function() {
             fetch('/admin/movieList', {
@@ -39,6 +46,13 @@
                 console.error('请求失败:', error);
                 document.getElementById('movieData').textContent = '数据加载失败';
             });
+        });
+
+        document.getElementById('goToManage').addEventListener('click', function navigateToEdit() {
+            const movieId = document.getElementById('movieId').value;
+            if (movieId) {
+                window.location.href = `movieManage.html?movieId=${encodeURIComponent(movieId)}`;
+            }
         });
     </script>
 </body>

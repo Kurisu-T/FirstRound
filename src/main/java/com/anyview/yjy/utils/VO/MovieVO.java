@@ -1,5 +1,7 @@
 package com.anyview.yjy.utils.VO;
 
+import com.anyview.yjy.utils.TimeUtils.TimeJSON;
+
 import java.time.LocalDateTime;
 
 public class MovieVO {
@@ -61,6 +63,8 @@ public class MovieVO {
     }
 
     public String toString() {
-        return "MovieVO{id = " + id + ", name = " + name + ", showTime = " + showTime + ", hall = " + hall + ", description = " + description + "}";
+        return "{\"id\":" + getId() + ",\"name\":\"" + getName() +
+                "\",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\", \"hall\":" + getHall() + ",\"description\":\"" + getDescription() + "\"}";
     }
 }

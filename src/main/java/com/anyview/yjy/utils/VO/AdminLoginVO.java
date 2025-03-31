@@ -29,6 +29,6 @@ public class AdminLoginVO {
     }
 
     public String toString() {
-        return "AdminLoginVO{id = " + id + ", name = " + name + "}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\"}";
     }
 }

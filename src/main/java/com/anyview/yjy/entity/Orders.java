@@ -1,5 +1,8 @@
 package com.anyview.yjy.entity;
 
+import com.anyview.yjy.utils.TimeUtils.TimeJSON;
+
+import java.sql.Time;
 import java.time.LocalDateTime;
 
 public class Orders {
@@ -92,6 +95,11 @@ public class Orders {
     }
 
     public String toString() {
-        return "Orders{id = " + id + ", userId = " + userId + ", movie = " + movie + ", hall = " + hall + ", seat = " + seat + ", createTime = " + createTime + ", showTime = " + showTime + ", status = " + status + "}";
+        return "{\"id\":" + getId() + ",\"userId\":" + getUserId() +
+                ",\"movie\":" + getMovie() + ",\"hall\":" + getHall() +
+                ",\"seat\":" + getSeat() +
+                ",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\",\"createTime\":\"" + TimeJSON.timeToJSON(getCreateTime()) +
+                "\",\"status\":\"" + getStatus() + "\"}";
     }
 }

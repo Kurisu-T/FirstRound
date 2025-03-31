@@ -1,6 +1,10 @@
 package com.anyview.yjy.entity;
 
+import com.anyview.yjy.utils.TimeUtils.TimeJSON;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 public class Movie {
     private Long id;
@@ -71,6 +75,9 @@ public class Movie {
     }
 
     public String toString() {
-        return "Movie{id = " + id + ", name = " + name + ", createTime = " + createTime + ", showTime = " + showTime + ", hall = " + hall + ", description = " + description + "}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": \"" +
+                TimeJSON.timeToJSON(createTime) +
+                "\", \"showTime\": \"" + TimeJSON.timeToJSON(showTime) +
+                "\", \"hall\": " + hall + ", \"description\": \"" + description + "\"}";
     }
 }

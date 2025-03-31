@@ -30,6 +30,6 @@ public class AdminRegisterVO {
     }
 
     public String toString() {
-        return "AdminRegisterVO{name = " + name + ", phone = " + phone + "}";
+        return "{\"name\": \"" + name + "\", \"phone\": \"" + phone + "\"}";
     }
 }

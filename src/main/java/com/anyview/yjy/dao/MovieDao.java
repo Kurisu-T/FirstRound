@@ -51,24 +51,29 @@ public class MovieDao {
      */
     public List<Movie> listByAdmin() {
         String sql = "select * from movie";
-
+        List<Movie>list = new ArrayList<>();
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
 
-            List<Movie>list = new ArrayList<>();
             while (rs.next()) {
                 Movie movie = new Movie();
-
+//                Long id = rs.getLong("id");
+//                String name = rs.getString("name");
+//                Long hall = rs.getLong("hall");
+//                LocalDateTime showTime = rs.getObject("show_time", LocalDateTime.class);
+//                LocalDateTime createTime = rs.getObject("create_time", LocalDateTime.class);
+//                String description = rs.getString("description");
+//                System.out.println(id + "->" + name + "->" + hall + "->" + showTime + "->" + createTime + "->" + description);
                 movie.setId(rs.getLong("id"));
                 movie.setName(rs.getString("name"));
                 movie.setHall(rs.getLong("hall"));
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
                 movie.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 movie.setDescription(rs.getString("description"));
-
                 list.add(movie);
+
             }
             return list;
         } catch (SQLException e) {

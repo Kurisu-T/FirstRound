@@ -50,6 +50,7 @@ public class Admin {
     }
 
     public String toString() {
-        return "Admin{id = " + id + ", name = " + name + ", phone = " + phone + ", password = " + password + "}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"phone\": \"" + phone +
+                "\", \"password\": \"" + password + "\"}";
     }
 }

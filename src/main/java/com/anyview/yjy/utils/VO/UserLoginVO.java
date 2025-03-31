@@ -30,6 +30,6 @@ public class UserLoginVO {
     }
 
     public String toString() {
-        return "UserLoginVO{id = " + id + ", name = " + name + "}";
+        return "{\"id\":" + id + ", \"name\": \"" + name + "\"}";
     }
 }

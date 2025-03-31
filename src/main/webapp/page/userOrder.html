@@ -28,7 +28,7 @@
                 return;
             }
             const displayDiv = document.getElementById('orderData');
-            if(data && data.code === 200) {
+            if(data && data.code === '200') {
                 displayDiv.textContent = JSON.stringify(data, null, 2);
             } else {
                 displayDiv.textContent = data?.msg || '获取订单失败';

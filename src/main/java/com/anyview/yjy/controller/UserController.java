@@ -5,7 +5,7 @@ import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.UserLoginDTO;
 import com.anyview.yjy.utils.VO.UserLoginVO;
 import com.anyview.yjy.utils.VO.UserRegisterVO;
-import com.anyview.yjy.utils.result.Result;
+import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -47,15 +47,15 @@ public class UserController extends HttpServlet {
     private void getById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
         if(userId == null){
-            resp.getWriter().write(Result.error("未登录"));
+            resp.getWriter().write(MyResult.error("未登录"));
             return;
         }
         User user = userService.getById(userId);
         if(user == null){
-            resp.getWriter().write(Result.error("用户不存在"));
+            resp.getWriter().write(MyResult.error("用户不存在"));
             return;
         }
-        resp.getWriter().write(Result.success(user));
+        resp.getWriter().write(MyResult.success(user));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class UserController extends HttpServlet {
         User user = userService.getById(id);
 
         if(user == null){
-            resp.getWriter().write(Result.error("用户不存在"));
+            resp.getWriter().write(MyResult.error("用户不存在"));
             return;
         }
 
@@ -118,14 +118,14 @@ public class UserController extends HttpServlet {
         user.setPassword(password);
 
         if(user.getName().isEmpty() || user.getPhone().isEmpty() || user.getPassword().isEmpty()){
-            resp.getWriter().write(Result.error("修改失败"));
+            resp.getWriter().write(MyResult.error("修改失败"));
             return;
         } else {
             userService.update(user);
             req.getSession().setAttribute("userId", user.getId());
-            resp.getWriter().write(Result.success());
+            resp.getWriter().write(MyResult.success());
         }
-//        resp.getWriter().write(Result.success());
+//        resp.getWriter().write(MyResult.success());
 //        resp.sendRedirect("/users");
     }
 
@@ -143,7 +143,7 @@ public class UserController extends HttpServlet {
         String password = req.getParameter("password");
 
         if(userService.getByPhone(phone) != null){
-            resp.getWriter().write(Result.error("用户已存在"));
+            resp.getWriter().write(MyResult.error("用户已存在"));
             return;
         }
 
@@ -153,7 +153,7 @@ public class UserController extends HttpServlet {
 
         UserRegisterVO vo = userService.register(user);
 
-        resp.getWriter().write(vo == null ? Result.error("注册失败") : Result.success(vo));
+        resp.getWriter().write(vo == null ? MyResult.error("注册失败") : MyResult.success(vo));
 //        resp.sendRedirect("/");
     }
 
@@ -173,7 +173,7 @@ public class UserController extends HttpServlet {
 
         UserLoginVO userVO = userService.login(user);
         if(userVO == null){
-            resp.getWriter().write(Result.error("手机号或密码错误"));
+            resp.getWriter().write(MyResult.error("手机号或密码错误"));
 //            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long userId = userVO.getId();
@@ -181,7 +181,7 @@ public class UserController extends HttpServlet {
             req.getSession().invalidate();
             req.getSession().setAttribute("userId", userId);
 
-            resp.getWriter().write(Result.success(userVO));
+            resp.getWriter().write(MyResult.success(userVO));
 //            resp.sendRedirect("/users");
         }
     }

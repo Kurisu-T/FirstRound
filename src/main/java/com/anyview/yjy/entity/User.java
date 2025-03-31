@@ -59,6 +59,7 @@ public class User {
     }
 
     public String toString() {
-        return "User{id = " + id + ", name = " + name + ", phone = " + phone + ", password = " + password + ", status = " + status + "}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"phone\": \"" + phone +
+                "\", \"password\": \"" + password + "\", \"status\": " + status + "}";
     }
 }
