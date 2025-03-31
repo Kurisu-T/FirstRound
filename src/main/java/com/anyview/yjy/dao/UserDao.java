@@ -98,6 +98,7 @@ public class UserDao {
                 user.setPhone(rs.getString("phone"));
                 user.setPassword(rs.getString("password"));
                 user.setMoney(rs.getInt("money"));
+                user.setStatus(rs.getInt("status"));
                 return user;
             }
 

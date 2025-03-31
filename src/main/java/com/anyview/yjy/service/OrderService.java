@@ -44,4 +44,12 @@ public class OrderService {
     public Orders getById(Long orderId) {
         return orderDao.getById(orderId);
     }
+
+    /**
+     * 更新订单状态
+     * @param order
+     */
+    public void update(Orders order) {
+        orderDao.update(order);
+    }
 }

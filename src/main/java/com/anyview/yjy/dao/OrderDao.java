@@ -221,6 +221,7 @@ public class OrderDao {
             rs = ps.executeQuery();
             if(rs.next()) {
                 Orders order = new Orders();
+                order.setId(rs.getLong("id"));
                 order.setUserId(rs.getLong("user_id"));
                 order.setMovie(rs.getLong("movie"));
                 order.setHall(rs.getLong("hall"));
@@ -235,5 +236,32 @@ public class OrderDao {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    /**
+     * 更新订单状态
+     * @param order
+     */
+    public void update(Orders order) {
+        String sql = "update orders set user_id = ?, create_time = ?, movie = ?," +
+                "hall = ?, seat = ?, show_time = ?, status = ?, price = ? where id = ?";
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, order.getUserId());
+            ps.setString(2, order.getCreateTime().toString());
+            ps.setLong(3, order.getMovie());
+            ps.setLong(4, order.getHall());
+            ps.setLong(5, order.getSeat());
+            ps.setString(6,order.getShowTime().toString());
+            ps.setLong(7, order.getStatus());
+            ps.setLong(8, order.getPrice());
+            ps.setLong(9, order.getId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

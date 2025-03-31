@@ -1,7 +1,9 @@
 package com.anyview.yjy.controller;
 
 import com.anyview.yjy.entity.Orders;
+import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.OrderService;
+import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.jsonUtils;
 import com.anyview.yjy.utils.result.MyResult;
 import com.mysql.cj.x.protobuf.MysqlxCrud;
@@ -19,6 +21,7 @@ import static com.anyview.yjy.utils.code.*;
 @WebServlet("/order/*")
 public class OrderController extends HttpServlet {
     OrderService orderService = new OrderService();
+    UserService userService = new UserService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
@@ -31,8 +34,6 @@ public class OrderController extends HttpServlet {
         }
 
         String path = req.getPathInfo();
-
-        System.out.println(path);
 
         switch (path) {
             case "/list":
@@ -72,7 +73,7 @@ public class OrderController extends HttpServlet {
             case "/buy":
                 buyTicket(req, resp);
                 break;
-            case "pay":
+            case "/pay":
                 pay(req, resp);
                 break;
             default:
@@ -93,7 +94,29 @@ public class OrderController extends HttpServlet {
         if(UserId == null || orderId == null) {
             resp.getWriter().write(MyResult.error("订单或用户信息有误"));
         }
-
+        Orders order = new Orders();
+        order = orderService.getById(orderId);
+        if(order == null) {
+            resp.getWriter().write(MyResult.error("未查询到订单信息"));
+        }
+        if(!order.getStatus().equals(ORDER_UNPAID)) {
+            resp.getWriter().write(MyResult.success("订单无需支付"));
+        }
+        User user = new User();
+        user = userService.getById(UserId);
+        if(user == null) {
+            resp.getWriter().write(MyResult.error("未查询到用户信息"));
+        }
+        if(user.getMoney() < order.getPrice()) {
+            resp.getWriter().write(MyResult.error("账户余额不足"));
+        }
+        user.setMoney(user.getMoney() - order.getPrice());
+        order.setStatus(ORDER_PAID);
+        userService.update(user);
+        System.out.println("user update");
+        orderService.update(order);
+        System.out.println("order update");
+        resp.getWriter().write(MyResult.success());
     }
 
     /**
