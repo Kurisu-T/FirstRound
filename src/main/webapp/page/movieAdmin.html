@@ -11,9 +11,13 @@
 
     <hr>
     <form id="manageMovie">
-        <p><h5>编辑电影信息</h5></p>
+        <p><h3>编辑电影信息</h3></p>
         电影id：<input type="text" id="movieId" required>
         <button type="button" id="goToManage">确定</button>
+    </form>
+
+    <form id="addMovie">
+        <p><button type="button" id="toAdd">添加电影</button></p>
     </form>
 
     <script>
@@ -53,6 +57,10 @@
             if (movieId) {
                 window.location.href = `movieManage.html?movieId=${encodeURIComponent(movieId)}`;
             }
+        });
+
+        document.getElementById('toAdd').addEventListener('click', function navigateToEdit() {
+            window.location.href = `addMovie.html`;
         });
     </script>
 </body>

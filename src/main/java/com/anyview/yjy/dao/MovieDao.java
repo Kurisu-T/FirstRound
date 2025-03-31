@@ -3,6 +3,7 @@ package com.anyview.yjy.dao;
 import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.utils.DBconnection;
 import com.anyview.yjy.utils.DTO.MovieDTO;
+import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 
 import java.sql.Connection;
@@ -89,7 +90,7 @@ public class MovieDao {
      */
     public MovieDTO getById(Long movieId) {
         MovieDTO movie = new MovieDTO();
-        String sql = "select * from movie where id = ?";
+        String sql = "select * from movie where id = ? and show_time > now()";
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
@@ -156,6 +157,30 @@ public class MovieDao {
 
             ps.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 添加电影
+     * @param movie
+     */
+    public void add(Movie movie) {
+        String sql = "insert into movie(name, show_time, hall, description, create_time) values(?, ?, ?, ?, ?)";
+
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, movie.getName());
+            ps.setString(2, movie.getShowTime().toString());
+            ps.setLong(3, movie.getHall());
+            ps.setString(4, movie.getDescription());
+            ps.setString(5, movie.getCreateTime().toString());
+
+            System.out.println();
+
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

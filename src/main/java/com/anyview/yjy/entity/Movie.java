@@ -75,9 +75,10 @@ public class Movie {
     }
 
     public String toString() {
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": \"" +
-                (createTime == null ? null : TimeJSON.timeToJSON(createTime)) +
-                "\", \"showTime\": \"" + TimeJSON.timeToJSON(showTime) +
-                "\", \"hall\": " + hall + ", \"description\": \"" + description + "\"}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"createTime\": " +
+                (createTime == null ? null : "\"" + TimeJSON.timeToJSON(createTime) + "\"") +
+                ", \"showTime\": " + (showTime == null ? null : "\"" + TimeJSON.timeToJSON(showTime) + "\"") +
+                ", \"hall\": " + hall +
+                ", \"description\": " + (description == null ? null : "\"" + description + "\"") + "}";
     }
 }

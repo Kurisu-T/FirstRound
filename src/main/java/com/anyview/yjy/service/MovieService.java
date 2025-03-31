@@ -41,4 +41,12 @@ public class MovieService {
     public void update(Movie movie) {
         movieDao.update(movie);
     }
+
+    /**
+     * 添加电影
+     * @param movie
+     */
+    public void add(Movie movie) {
+        movieDao.add(movie);
+    }
 }

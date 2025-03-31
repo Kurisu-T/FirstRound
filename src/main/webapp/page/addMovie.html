@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加电影</title>
+</head>
+<body>
+    <h3>添加电影信息</h3>
+    <form id="movieInfo">
+        <h2>电影信息</h2>
+        <p>电影名: <input type="text" id="name" name="name" required></p>
+        <p>放映时间: <input type="datetime-local" id="show_time" name="show_time" required></p>
+        <p>放映厅: <input type="text" id="hall" name="hall" required></p>
+        <p>描述: <input type="text" id="description" name="description" required></p>
+        <p><input type="submit" value="添加"></p>
+    </form>
+
+    <script>
+        window.addEventListener('load', function() {
+            document.getElementById('movieInfo').addEventListener('submit', function(e) {
+                e.preventDefault(); 
+                const showTimeInput = document.getElementById('show_time').value;
+                const formattedShowTime = showTimeInput ? `${showTimeInput.replace('T', ' ')}:00` : '';
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    showTime: formattedShowTime, 
+                    hall: document.getElementById('hall').value.trim(),
+                    description: document.getElementById('description').value.trim()
+                };
+
+                console.log(formData);
+
+                fetch(`/movie/add`, {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        window.location.href = '/index.html';
+                        return Promise.reject('未授权');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === '200') {
+                        alert('添加成功！');
+                        window.location.reload();
+                    } else {
+                        alert(`添加失败：${data.msg}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('提交失败:', error);
+                    alert('请求发送失败');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

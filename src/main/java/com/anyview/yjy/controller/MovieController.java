@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.DateTimeException;
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +90,9 @@ public class MovieController extends HttpServlet {
             case "/user":
                 doGet(req, resp);
                 break;
-//            case "/buy":
-//                buyTicket(req, resp);
-//                break;
+            case "/add":
+                add(req, resp);
+                break;
             case "/update":
                 getMovieById(req, resp);
                 break;
@@ -121,6 +121,26 @@ public class MovieController extends HttpServlet {
     }
 
     /**
+     * 添加电影
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
+    private void add(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+        Map<String, Object> data = ParseData.getData(req);
+        Movie movie = new Movie();
+        movie.setCreateTime(LocalDateTime.now());
+        movie.setName(data.get("name").toString());
+        movie.setDescription(data.get("description").toString());
+        movie.setHall(Long.parseLong(data.get("hall").toString()));
+        movie.setShowTime(TimeJSON.JSONtoTime(data.get("showTime").toString()));
+        movieService.add(movie);
+
+        resp.getWriter().write(MyResult.success());
+    }
+
+    /**
      * 获取电影列表
      * @param req
      * @param resp
@@ -128,7 +148,6 @@ public class MovieController extends HttpServlet {
     private void getMovieList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
         Long adminId = (Long) req.getSession().getAttribute("adminId");
-
         if((userId == null && adminId == null) || (userId != null && adminId != null)) {
             req.getSession().invalidate();
             resp.getWriter().write(MyResult.error("获取用户信息失败"));
@@ -136,6 +155,7 @@ public class MovieController extends HttpServlet {
         }
 
         if(userId != null && userId > 0) {
+            System.out.println(userId);
             List<MovieVO> list = movieService.list();
 //            String movieJSON = jsonUtils.toJson(list);
 //            if(movieJSON.equals("error")){
@@ -151,7 +171,6 @@ public class MovieController extends HttpServlet {
             List<Movie> list = movieService.listByAdmin();
 //            String movieJSON = jsonUtils.toMovieJson(list);
             resp.getWriter().write(MyResult.success(list));
-            System.out.println(MyResult.success(list));
 //            req.setAttribute("movie", movieJSON);
 //            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
         }
