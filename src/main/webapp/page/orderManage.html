@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>订单管理</title>
+    <title>退款申请处理</title>
 </head>
 <body>
-    <h3>订单历史</h3>
-    <pre id="orderData"></pre>
-    <hr>
-    <h3>处理退款申请</h3>
-    <button type="button" id="manage">处理申请</button>
+    <h3>申请列表</h3>
+    <pre id="applyList"></pre>
 
     <script>
         window.addEventListener('load', function() {
-            fetch('/admin/orderList', {
+            fetch('/order/cancel', {
                 method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
                 credentials: 'include'
             })
             .then(response => {
-                if(response.status === 401) {
-                    window.location.href = '/index.html';
+                if (response.status === 401) {
+                    alert('请先登录');
+                    window.location.href = '/page/login.html';
                     return;
                 }
                 return response.json();
@@ -31,20 +32,15 @@
                     window.location.href = '/index.html';
                     return;
                 }
-                const displayDiv = document.getElementById('orderData');
+                const orderList = document.getElementById('applyList');
                 if(data && data.code === '200') {
-                    displayDiv.textContent = JSON.stringify(data, null, 2);
+                    orderList.textContent = JSON.stringify(data, null, 2);
                 } else {
-                    displayDiv.textContent = data?.msg || '获取订用户信息失败';
+                    orderList.textContent = data?.msg || '获取订单信息失败';
                 }
             })
             .catch(error => {
                 console.error('请求失败:', error);
-                document.getElementById('orderData').textContent = '数据加载失败';
-            });
-
-            document.getElementById('manage').addEventListener('click', function() {
-                window.location.href = '/page/orderManage.html';
             });
         });
     </script>

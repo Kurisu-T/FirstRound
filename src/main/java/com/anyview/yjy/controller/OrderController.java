@@ -4,9 +4,7 @@ import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
-import com.anyview.yjy.utils.jsonUtils;
 import com.anyview.yjy.utils.result.MyResult;
-import com.mysql.cj.x.protobuf.MysqlxCrud;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -44,6 +42,9 @@ public class OrderController extends HttpServlet {
                 break;
             case "/detail":
                 getDetail(req, resp);
+                break;
+            case "/cancel":
+                getCancelApply(req, resp);
                 break;
             default:
                 resp.getWriter().write(MyResult.error("域名错误"));
@@ -84,6 +85,16 @@ public class OrderController extends HttpServlet {
                 break;
         }
 
+    }
+
+    /**
+     * 获取所有申请取消的订单
+     * @param req
+     * @param resp
+     */
+    private void getCancelApply(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<Orders>list = orderService.getCancelApply();
+        resp.getWriter().write(MyResult.success(list));
     }
 
     /**

@@ -295,4 +295,35 @@ public class OrderDao {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 获取申请取消的订单
+     * @return
+     */
+    public List<Orders> getCancelApply() {
+        String sql = "select * from orders where status = 4";
+        List<Orders> list = new ArrayList<>();
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                Orders order = new Orders();
+                order.setId(rs.getLong("id"));
+                order.setUserId(rs.getLong("user_id"));
+                order.setMovie(rs.getLong("movie"));
+                order.setHall(rs.getLong("hall"));
+                order.setSeat(rs.getLong("seat"));
+                order.setStatus(rs.getLong("status"));
+                order.setPrice(rs.getInt("price"));
+                order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                order.setEndTime(rs.getObject("end_time", LocalDateTime.class));
+                order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
+                list.add(order);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

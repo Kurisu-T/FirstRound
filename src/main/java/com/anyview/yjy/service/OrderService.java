@@ -61,4 +61,12 @@ public class OrderService {
     public Integer getMovieShow(Long userId) {
         return orderDao.getMovieShow(userId);
     }
+
+    /**
+     * 获取申请退款的订单
+     * @return
+     */
+    public List<Orders> getCancelApply() {
+        return orderDao.getCancelApply();
+    }
 }
