@@ -5,6 +5,7 @@ import com.anyview.yjy.utils.DBconnection;
 import com.anyview.yjy.utils.DTO.MovieDTO;
 import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
+import com.anyview.yjy.utils.result.MyResult;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,6 +37,8 @@ public class MovieDao {
                 vo.setName(rs.getString("name"));
                 vo.setId(rs.getLong("id"));
                 vo.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                vo.setEndTime(rs.getObject("end_time", LocalDateTime.class));
+                vo.setAmount(rs.getInt("amount"));
                 vo.setHall(rs.getLong("hall"));
                 vo.setPrice(rs.getInt("price"));
                 vo.setDescription(rs.getString("description"));
@@ -72,9 +75,11 @@ public class MovieDao {
                 movie.setName(rs.getString("name"));
                 movie.setHall(rs.getLong("hall"));
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                movie.setEndTime(rs.getObject("end_time", LocalDateTime.class));
                 movie.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 movie.setDescription(rs.getString("description"));
                 movie.setPrice(rs.getInt("price"));
+                movie.setAmount(rs.getInt("amount"));
                 list.add(movie);
 
             }
@@ -132,6 +137,11 @@ public class MovieDao {
                 movie.setDescription(rs.getString("description"));
                 movie.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                movie.setEndTime(rs.getObject("end_time", LocalDateTime.class));
+                movie.setAmount(rs.getInt("amount"));
+                movie.setPrice(rs.getInt("price"));
+
+                System.out.println(MyResult.success(movie));
 
                 return movie;
             }
@@ -147,7 +157,7 @@ public class MovieDao {
      * @param movie
      */
     public void update(Movie movie) {
-        String sql = "update movie set name = ?, hall = ?, show_time = ?, description = ? where id = ?";
+        String sql = "update movie set name = ?, hall = ?, show_time = ?, end_time = ?, amount = ?, price = ?, description = ? where id = ?";
 
         try {
             conn = DBconnection.getConnection();
@@ -155,8 +165,11 @@ public class MovieDao {
             ps.setString(1, movie.getName());
             ps.setLong(2, movie.getHall());
             ps.setObject(3, movie.getShowTime());
-            ps.setString(4, movie.getDescription());
-            ps.setLong(5, movie.getId());
+            ps.setObject(4, movie.getEndTime());
+            ps.setInt(5, movie.getAmount());
+            ps.setInt(6,movie.getPrice());
+            ps.setString(7, movie.getDescription());
+            ps.setLong(8, movie.getId());
 
             ps.executeUpdate();
 
@@ -170,18 +183,18 @@ public class MovieDao {
      * @param movie
      */
     public void add(Movie movie) {
-        String sql = "insert into movie(name, show_time, hall, description, create_time) values(?, ?, ?, ?, ?)";
+        String sql = "insert into movie(name, show_time, end_time, hall, amount, description, create_time) values(?,?,?,?,?,?,?)";
 
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, movie.getName());
             ps.setString(2, movie.getShowTime().toString());
-            ps.setLong(3, movie.getHall());
-            ps.setString(4, movie.getDescription());
-            ps.setString(5, movie.getCreateTime().toString());
-
-            System.out.println();
+            ps.setString(3, movie.getEndTime().toString());
+            ps.setLong(4, movie.getHall());
+            ps.setInt(5, movie.getAmount());
+            ps.setString(5, movie.getDescription());
+            ps.setString(6, movie.getCreateTime().toString());
 
             ps.executeUpdate();
         } catch (SQLException e) {

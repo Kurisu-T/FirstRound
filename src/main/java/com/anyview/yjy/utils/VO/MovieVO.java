@@ -8,27 +8,32 @@ public class MovieVO {
     private Long id;
     private String name;
     private LocalDateTime showTime;
+    private LocalDateTime endTime;
     private Long hall;
     private String description;
     private Integer price;
+    private Integer amount;
 
     public MovieVO() {
     }
 
-    public MovieVO(Long id, String name, LocalDateTime showTime, Long hall, String description, Integer price) {
+    public MovieVO(Long id, String name, LocalDateTime showTime, LocalDateTime endTime, Long hall, String description, Integer price, Integer amount) {
         this.id = id;
         this.name = name;
         this.showTime = showTime;
+        this.endTime = endTime;
         this.hall = hall;
         this.description = description;
         this.price = price;
+        this.amount = amount;
     }
 
     public String toString() {
         return "{\"id\":" + getId() + ",\"name\":\"" + getName() +
                 "\",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\",\"endTime\":\"" + TimeJSON.timeToJSON(getEndTime()) +
                 "\", \"hall\":" + getHall() + ",\"description\":\"" + getDescription() + "\", " +
-                "\"price\":" + price + "}";
+                "\"price\":" + price + ", \"amount\":" + amount + "}";
     }
 
     public Long getId() {
@@ -55,6 +60,14 @@ public class MovieVO {
         this.showTime = showTime;
     }
 
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     public Long getHall() {
         return hall;
     }
@@ -77,5 +90,13 @@ public class MovieVO {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 }

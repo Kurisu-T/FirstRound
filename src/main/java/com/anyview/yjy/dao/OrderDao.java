@@ -53,7 +53,7 @@ public class OrderDao {
             }
 
         } else if(userId != null) {
-            String sql = "select id, movie, hall, seat, show_time, status, create_time, price from orders where user_id = ?";
+            String sql = "select * from orders where user_id = ?";
 //            System.out.println("Test of user order " + userId);
             try {
                 conn = DBconnection.getConnection();
@@ -67,6 +67,7 @@ public class OrderDao {
                 while(rs.next()) {
                     Orders order = new Orders();
                     order.setId(rs.getLong("id"));
+                    order.setUserId(rs.getLong("user_id"));
                     order.setMovie(rs.getLong("movie"));
                     order.setHall(rs.getLong("hall"));
                     order.setSeat(rs.getLong("seat"));

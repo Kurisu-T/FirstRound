@@ -111,7 +111,7 @@ public class MovieController extends HttpServlet {
         }
 
         String path = req.getPathInfo();
-        System.out.println(path);
+
         if(path.startsWith("/modify/")) {
             update(req, resp);
         }
@@ -155,7 +155,6 @@ public class MovieController extends HttpServlet {
         }
 
         if(userId != null && userId > 0) {
-            System.out.println(userId);
             List<MovieVO> list = movieService.list();
 //            String movieJSON = jsonUtils.toJson(list);
 //            if(movieJSON.equals("error")){
@@ -213,14 +212,19 @@ public class MovieController extends HttpServlet {
     private void update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
         Long movieId = Long.parseLong(path.split("/")[2]);
-
         Map<String, Object> data = ParseData.getData(req);
 
         String name = (String) data.get("name");
         Long hall = Long.parseLong((String) data.get("hall"));
         String dateTime = (String) data.get("showTime");
         LocalDateTime showTime = TimeJSON.JSONtoTime(dateTime);
+        dateTime = (String)data.get("endTime");
+        LocalDateTime endTime = TimeJSON.JSONtoTime(dateTime);
         String description = (String) data.get("description");
+        Integer amount = Integer.parseInt(data.get("amount").toString());
+        System.out.println(data.get("price"));
+        Integer price = Integer.parseInt(data.get("price").toString());
+        System.out.println(8);
 
 
 //        String movieName = req.getParameter("name");
@@ -236,12 +240,15 @@ public class MovieController extends HttpServlet {
         movie.setName(name);
         movie.setHall(hall);
         movie.setShowTime(showTime);
+        movie.setEndTime(endTime);
+        movie.setAmount(amount);
+        movie.setPrice(price);
         movie.setDescription(description);
 
+        System.out.println(MyResult.success(movie));
         movieService.update(movie);
 //        req.removeAttribute("movie");
 //        resp.getWriter().write(jsonUtils.toJson(movie));
-        System.out.println(MyResult.success(movie));
         resp.getWriter().write(MyResult.success(movie));
 //        try {
 //            doGet(req, resp);

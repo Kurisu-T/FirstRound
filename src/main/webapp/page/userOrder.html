@@ -7,6 +7,12 @@
 <body>
     <h2>订单历史</h2>
     <pre id="orderData"></pre>
+    <hr>
+    <form id="orderDetail">
+        <h2>查询订单详细</h2>
+        <input type="text" id="orderId" name="orderId" required>
+        <input type="submit" value="查询">
+    </form>
 
     <script>
     window.addEventListener('load', function() {
@@ -37,6 +43,19 @@
         .catch(error => {
             console.error('请求失败:', error);
             document.getElementById('orderData').textContent = '数据加载失败';
+        });
+        
+        document.getElementById('orderDetail').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const orderId = document.getElementById('orderId').value.trim();
+            
+            if (!orderId) {
+                alert('请输入有效的订单ID');
+                return;
+            }
+            
+            // 跳转到支付页面并携带orderId参数
+            window.location.href = `/page/pay.html?orderId=${encodeURIComponent(orderId)}`;
         });
     });
     </script>
