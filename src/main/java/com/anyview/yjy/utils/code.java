@@ -1,6 +1,8 @@
 package com.anyview.yjy.utils;
 
 public class code {
+    // 悲观锁前缀
+    public static final String LOCK = "lock:movie:";
 
     // 账号状态
     public static final Integer USER_NORMAL = 1;
