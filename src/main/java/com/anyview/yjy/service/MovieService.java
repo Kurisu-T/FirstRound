@@ -49,4 +49,12 @@ public class MovieService {
     public void add(Movie movie) {
         movieDao.add(movie);
     }
+
+    /**
+     * 更新电影信息（无锁）
+     * @param movie
+     */
+    public void updateNoLock(Movie movie) {
+        movieDao.updateNoLock(movie);
+    }
 }

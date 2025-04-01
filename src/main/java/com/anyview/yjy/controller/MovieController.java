@@ -251,7 +251,7 @@ public class MovieController extends HttpServlet {
         movie.setDescription(description);
 
         System.out.println(MyResult.success(movie));
-        movieService.update(movie);
+        movieService.updateNoLock(movie);
 //        req.removeAttribute("movie");
 //        resp.getWriter().write(jsonUtils.toJson(movie));
         resp.getWriter().write(MyResult.success(movie));
