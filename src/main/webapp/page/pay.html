@@ -9,6 +9,7 @@
     <h3>订单详细</h3>
     <pre id="orderData"></pre>
     <button type="button" id="payButton">支付</button></p>
+    <button type="button" id="unPay">申请退款</button>
 
     <script>
         window.addEventListener('load', function() {
@@ -69,6 +70,40 @@
                         window.location.href = `/page/userOrder.html`;
                     } else {
                         alert(`支付失败：${data.msg}`);
+                    }
+                })
+                .catch(error => {
+                    if (!error) return; // 排除已处理的跳转错误
+                    console.error('支付错误:', error);
+                    alert('支付请求失败，请检查网络');
+                });
+            });
+
+            document.getElementById('unPay').addEventListener('click', function() {
+                if (!orderId) return;
+
+                fetch('/order/cancel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `orderId=${orderId}`,
+                    credentials: 'include'
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        alert('请先登录');
+                        window.location.href = '/page/login.html';
+                        return Promise.reject();
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === '200') {
+                        alert('已提交申请');
+                        window.location.href = `/page/pay.html`;
+                    } else {
+                        alert(`申请失败：${data.msg}`);
                     }
                 })
                 .catch(error => {

@@ -42,6 +42,7 @@ public class OrderDao {
                     order.setHall(rs.getLong("hall"));
                     order.setSeat(rs.getLong("seat"));
                     order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                    order.setEndTime(rs.getObject("end_time", LocalDateTime.class));
                     order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                     order.setStatus(rs.getLong("status"));
                     order.setPrice(rs.getInt("price"));
@@ -72,6 +73,7 @@ public class OrderDao {
                     order.setHall(rs.getLong("hall"));
                     order.setSeat(rs.getLong("seat"));
                     order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                    order.setEndTime(rs.getObject("end_time", LocalDateTime.class));
                     order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                     order.setStatus(rs.getLong("status"));
                     order.setPrice(rs.getInt("price"));
@@ -99,7 +101,7 @@ public class OrderDao {
             return BUY_FAIL;
         }
 
-        String sql = "insert into orders(user_id, movie, hall, seat, show_time, create_time, status, price) values(?,?,?,?,?,?,?,?)";
+        String sql = "insert into orders(user_id, movie, hall, seat, show_time, end_time, create_time, status, price) values(?,?,?,?,?,?,?,?,?)";
         MovieDTO movie = movieDao.getById(movieId);
         // 电影不存在
         if(movie.getId() == null) {
@@ -119,6 +121,7 @@ public class OrderDao {
         order.setHall(movie.getHall());
         order.setSeat(seatId);
         order.setShowTime(movie.getShowTime());
+        order.setEndTime(movie.getEndTime());
         order.setCreateTime(LocalDateTime.now());
         order.setPrice(movie.getPrice());
         order.setStatus(ORDER_UNPAID); // 订单状态未支付
@@ -130,9 +133,10 @@ public class OrderDao {
             ps.setLong(3, order.getHall());
             ps.setLong(4, order.getSeat());
             ps.setString(5,order.getShowTime().toString());
-            ps.setString(6,order.getCreateTime().toString());
-            ps.setLong(7, order.getStatus());
-            ps.setLong(8, order.getPrice());
+            ps.setString(6,order.getEndTime().toString());
+            ps.setString(7,order.getCreateTime().toString());
+            ps.setLong(8, order.getStatus());
+            ps.setLong(9, order.getPrice());
             ps.executeUpdate();
             rs = ps.getGeneratedKeys();
             if(rs.next()) {
@@ -197,6 +201,7 @@ public class OrderDao {
                 order.setHall(rs.getLong("hall"));
                 order.setSeat(rs.getLong("seat"));
                 order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                order.setEndTime(rs.getObject("end_time", LocalDateTime.class));
                 order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
                 order.setStatus(rs.getLong("status"));
                 order.setPrice(rs.getInt("price"));
@@ -228,6 +233,7 @@ public class OrderDao {
                 order.setHall(rs.getLong("hall"));
                 order.setSeat(rs.getLong("seat"));
                 order.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                order.setEndTime(rs.getObject("end_time", LocalDateTime.class));
                 order.setStatus(rs.getLong("status"));
                 order.setPrice(rs.getInt("price"));
                 order.setCreateTime(rs.getObject("create_time", LocalDateTime.class));
@@ -244,8 +250,8 @@ public class OrderDao {
      * @param order
      */
     public void update(Orders order) {
-        String sql = "update orders set user_id = ?, create_time = ?, movie = ?," +
-                "hall = ?, seat = ?, show_time = ?, status = ?, price = ? where id = ?";
+        String sql = "update orders set user_id = ?, create_time = ?, movie = ?, hall = ?, " +
+                "seat = ?, show_time = ?, end_time = ?, status = ?, price = ? where id = ?";
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
@@ -255,9 +261,10 @@ public class OrderDao {
             ps.setLong(4, order.getHall());
             ps.setLong(5, order.getSeat());
             ps.setString(6,order.getShowTime().toString());
-            ps.setLong(7, order.getStatus());
-            ps.setLong(8, order.getPrice());
-            ps.setLong(9, order.getId());
+            ps.setString(7,order.getEndTime().toString());
+            ps.setLong(8, order.getStatus());
+            ps.setLong(9, order.getPrice());
+            ps.setLong(10, order.getId());
 
             ps.executeUpdate();
 
@@ -272,8 +279,8 @@ public class OrderDao {
      * @return
      */
     public Integer getMovieShow(Long userId) {
-        String sql = "select count(1) from movie where date_sub(show_time, interval 10 minute) < now() " +
-                "and end_time > now() and id in (select movie from orders where user_id = ?)";
+        String sql = "select count(1) from orders where date_sub(show_time, interval 10 minute) < now() " +
+                "and end_time > now() and status = 1 and user_id = ?";
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);

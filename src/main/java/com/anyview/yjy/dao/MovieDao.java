@@ -108,6 +108,7 @@ public class MovieDao {
                 movie.setHall(rs.getLong("hall"));
                 movie.setPrice(rs.getInt("price"));
                 movie.setShowTime(rs.getObject("show_time", LocalDateTime.class));
+                movie.setEndTime(rs.getObject("end_time", LocalDateTime.class));
             }
             return movie;
         } catch (SQLException e) {

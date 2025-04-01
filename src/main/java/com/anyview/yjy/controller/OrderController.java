@@ -191,7 +191,6 @@ public class OrderController extends HttpServlet {
         } else if(number.equals(BUY_FAIL)) {
             resp.getWriter().write(MyResult.error("未知错误"));
         } else {
-            System.out.println(MyResult.success(number));
             resp.getWriter().write(MyResult.success(number));
         }
 

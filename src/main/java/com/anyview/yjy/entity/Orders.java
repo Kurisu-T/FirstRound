@@ -13,13 +13,14 @@ public class Orders {
     private Long seat;
     private LocalDateTime createTime;
     private LocalDateTime showTime;
+    private LocalDateTime endTime;
     private Long status;
     private Integer price;
 
     public Orders() {
     }
 
-    public Orders(Long id, Long userId, Long movie, Long hall, Long seat, LocalDateTime createTime, LocalDateTime showTime, Long status, Integer price) {
+    public Orders(Long id, Long userId, Long movie, Long hall, Long seat, LocalDateTime createTime, LocalDateTime showTime, LocalDateTime endTime, Long status, Integer price) {
         this.id = id;
         this.userId = userId;
         this.movie = movie;
@@ -27,15 +28,18 @@ public class Orders {
         this.seat = seat;
         this.createTime = createTime;
         this.showTime = showTime;
+        this.endTime = endTime;
         this.status = status;
         this.price = price;
     }
+
 
     public String toString() {
         return "{\"id\":" + getId() + ",\"userId\":" + getUserId() +
                 ",\"movie\":" + getMovie() + ",\"hall\":" + getHall() +
                 ",\"seat\":" + getSeat() + ",\"price\":" + price +
                 ",\"showTime\":\"" + TimeJSON.timeToJSON(getShowTime()) +
+                "\",\"endTime\":\"" + TimeJSON.timeToJSON(getEndTime()) +
                 "\",\"createTime\":\"" + TimeJSON.timeToJSON(getCreateTime()) +
                 "\",\"status\":\"" + getStatus() + "\"}";
     }
@@ -110,5 +114,13 @@ public class Orders {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }

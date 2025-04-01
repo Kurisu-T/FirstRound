@@ -6,15 +6,17 @@ public class MovieDTO {
     private Long id;
     private Long hall;
     private LocalDateTime showTime;
+    private LocalDateTime endTime;
     private Integer price;
 
     public MovieDTO() {
     }
 
-    public MovieDTO(Long id, Long hall, LocalDateTime showTime, Integer price) {
+    public MovieDTO(Long id, Long hall, LocalDateTime showTime, LocalDateTime endTime, Integer price) {
         this.id = id;
         this.hall = hall;
         this.showTime = showTime;
+        this.endTime = endTime;
         this.price = price;
     }
 
@@ -42,8 +44,12 @@ public class MovieDTO {
         this.showTime = showTime;
     }
 
-    public String toString() {
-        return "movieDTO{id = " + id + ", hall = " + hall + ", showTime = " + showTime + "}";
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public Integer getPrice() {
@@ -52,5 +58,9 @@ public class MovieDTO {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public String toString() {
+        return "MovieDTO{id = " + id + ", hall = " + hall + ", showTime = " + showTime + ", endTime = " + endTime + ", price = " + price + "}";
     }
 }
