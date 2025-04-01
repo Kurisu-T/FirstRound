@@ -1,16 +1,20 @@
 package com.anyview.yjy.controller;
 
+import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
+import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DataUtils.ParseData;
+import com.anyview.yjy.utils.RedisUtils.JedisUtils;
 import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +26,7 @@ import static com.anyview.yjy.utils.code.*;
 public class OrderController extends HttpServlet {
     OrderService orderService = new OrderService();
     UserService userService = new UserService();
+    MovieService movieService = new MovieService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
@@ -130,8 +135,12 @@ public class OrderController extends HttpServlet {
             order.setStatus(ORDER_CANCEL);
             User user = userService.getById(order.getUserId());
             user.setMoney(user.getMoney() + order.getPrice());
-            System.out.println(user);
             userService.update(user);
+
+            Movie movie = movieService.adminGetById(order.getMovie());
+            movie.setAmount(movie.getAmount() + 1);
+            movieService.update(movie);
+
         } else if(status == 1) {
             order.setStatus(ORDER_REJECT);
         }
@@ -269,6 +278,16 @@ public class OrderController extends HttpServlet {
         Long movieId = Long.parseLong(req.getParameter("movieId"));
         Long seatId = Long.parseLong(req.getParameter("seatId"));
 
+        System.out.println("create lock");
+        Jedis jedis = JedisUtils.getJedis();
+        System.out.println("lock had created");
+        Long lock = jedis.setnx(LOCK + movieId, "");
+        if(lock == null || lock <= 0) {
+            resp.getWriter().write(MyResult.error("购票失败"));
+            return;
+        }
+        jedis.expire(LOCK + movieId, 10);
+
         Integer number = orderService.add(userId, movieId, seatId);
 
         if(number.equals(MOVIE_NO_FIND)) {
@@ -280,6 +299,7 @@ public class OrderController extends HttpServlet {
         } else {
             resp.getWriter().write(MyResult.success(number));
         }
+        jedis.del(LOCK + movieId);
 
 //        if(number > 0) {
 //            resp.getWriter().write(MyResult.success());
