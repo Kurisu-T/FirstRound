@@ -265,4 +265,27 @@ public class OrderDao {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 获取即将放映的电影数量
+     * @param userId
+     * @return
+     */
+    public Integer getMovieShow(Long userId) {
+        String sql = "select count(1) from movie where date_sub(show_time, interval 10 minute) < now() " +
+                "and end_time > now() and id in (select movie from orders where user_id = ?)";
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, userId);
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                return rs.getInt(1);
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

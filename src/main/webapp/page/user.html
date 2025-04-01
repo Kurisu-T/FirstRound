@@ -63,6 +63,35 @@
             });
     });
 
+    //查询电影订单信息
+    document.addEventListener('DOMContentLoaded', function() {
+        // 第一步：请求用户数据
+        fetch('/users/movieList', {
+            method: 'GET',
+            credentials: 'include' // 携带cookie
+        })
+            .then(response => {
+                // 处理401未授权
+                if (response.status === '401') {
+                    window.location.href = '/index.html';
+                    return Promise.reject('未授权');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 处理成功响应
+                if (data && data.code === '200') {
+                    const number = data.data;
+                    alert(`注意：您有 ${number} 个电影正在或即将放映`);
+                    
+                }
+            })
+            .catch(error => {
+                console.error('获取用户数据失败:', error);
+                alert('无法加载用户信息');
+            });
+    });
+
     // 修改表单提交
     document.getElementById('updateForm').addEventListener('submit', function(e) {
         e.preventDefault();

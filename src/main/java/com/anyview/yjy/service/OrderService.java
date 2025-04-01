@@ -52,4 +52,13 @@ public class OrderService {
     public void update(Orders order) {
         orderDao.update(order);
     }
+
+    /**
+     * 获取即将放映的电影数量
+     * @param userId
+     * @return
+     */
+    public Integer getMovieShow(Long userId) {
+        return orderDao.getMovieShow(userId);
+    }
 }

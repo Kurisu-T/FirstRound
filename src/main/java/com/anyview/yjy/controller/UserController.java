@@ -1,6 +1,7 @@
 package com.anyview.yjy.controller;
 
 import com.anyview.yjy.entity.User;
+import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DTO.UserLoginDTO;
 import com.anyview.yjy.utils.VO.UserLoginVO;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class UserController extends HttpServlet {
 
     UserService userService = new UserService();
+    OrderService orderService = new OrderService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,6 +28,9 @@ public class UserController extends HttpServlet {
         String path = req.getPathInfo();
         if(path.equals("/data")){
             getById(req, resp);
+            return;
+        } else if(path.equals("/movieList")) {
+            getMovieShow(req, resp);
             return;
         }
 
@@ -70,6 +75,19 @@ public class UserController extends HttpServlet {
 
     }
 
+
+    /**
+     * 获取即将放映的电影
+     * @param req
+     * @param resp
+     */
+    private void getMovieShow(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long userId = (Long) req.getSession().getAttribute("userId");
+        Integer number = orderService.getMovieShow(userId);
+        System.out.println(MyResult.success(number));
+        if(number == 0) resp.getWriter().write(MyResult.error("Zero"));
+        else resp.getWriter().write(MyResult.success(number));
+    }
 
     /**
      * 登录成功后展示用户信息

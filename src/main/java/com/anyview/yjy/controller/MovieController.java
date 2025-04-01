@@ -83,6 +83,8 @@ public class MovieController extends HttpServlet {
             return;
         }
 
+        System.out.println(pathInfo);
+
         switch (pathInfo) {
             case "/admin":
                 doGet(req, resp);
@@ -135,6 +137,9 @@ public class MovieController extends HttpServlet {
         movie.setDescription(data.get("description").toString());
         movie.setHall(Long.parseLong(data.get("hall").toString()));
         movie.setShowTime(TimeJSON.JSONtoTime(data.get("showTime").toString()));
+        movie.setEndTime(TimeJSON.JSONtoTime(data.get("endTime").toString()));
+        movie.setAmount(Integer.parseInt(data.get("amount").toString()));
+        movie.setPrice(Integer.parseInt(data.get("price").toString()));
         movieService.add(movie);
 
         resp.getWriter().write(MyResult.success());

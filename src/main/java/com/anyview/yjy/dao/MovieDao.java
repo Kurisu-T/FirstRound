@@ -188,13 +188,21 @@ public class MovieDao {
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
+            System.out.println("here ?");
             ps.setString(1, movie.getName());
+            System.out.println(1);
             ps.setString(2, movie.getShowTime().toString());
+            System.out.println(2);
             ps.setString(3, movie.getEndTime().toString());
+            System.out.println(3);
             ps.setLong(4, movie.getHall());
+            System.out.println(4);
             ps.setInt(5, movie.getAmount());
-            ps.setString(5, movie.getDescription());
-            ps.setString(6, movie.getCreateTime().toString());
+            System.out.println(5);
+            ps.setString(6, movie.getDescription());
+            System.out.println(6);
+            ps.setString(7, movie.getCreateTime().toString());
+            System.out.println(7);
 
             ps.executeUpdate();
         } catch (SQLException e) {
