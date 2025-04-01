@@ -15,7 +15,7 @@ public class MyResult {
     }
 
     public static String error(String msg) {
-        String json = "{\"code\":\"500\",\"msg\":\""+msg+"\",\"data\":null}";
+        String json = "{\"code\":\"500\",\"msg\":\""+msg+"\"}";
         return json;
     }
 

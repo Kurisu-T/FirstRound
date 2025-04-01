@@ -93,29 +93,32 @@ public class OrderController extends HttpServlet {
         Long orderId = Long.parseLong(req.getParameter("orderId"));
         if(UserId == null || orderId == null) {
             resp.getWriter().write(MyResult.error("订单或用户信息有误"));
+            return;
         }
         Orders order = new Orders();
         order = orderService.getById(orderId);
         if(order == null) {
             resp.getWriter().write(MyResult.error("未查询到订单信息"));
+            return;
         }
-        if(!order.getStatus().equals(ORDER_UNPAID)) {
-            resp.getWriter().write(MyResult.success("订单无需支付"));
+        if(order.getStatus() != ORDER_UNPAID) {
+            resp.getWriter().write(MyResult.error("订单无需支付"));
+            return;
         }
         User user = new User();
         user = userService.getById(UserId);
         if(user == null) {
             resp.getWriter().write(MyResult.error("未查询到用户信息"));
+            return;
         }
         if(user.getMoney() < order.getPrice()) {
             resp.getWriter().write(MyResult.error("账户余额不足"));
+            return;
         }
         user.setMoney(user.getMoney() - order.getPrice());
         order.setStatus(ORDER_PAID);
         userService.update(user);
-        System.out.println("user update");
         orderService.update(order);
-        System.out.println("order update");
         resp.getWriter().write(MyResult.success());
     }
 
@@ -144,7 +147,7 @@ public class OrderController extends HttpServlet {
      */
     private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
-        resp.getWriter().write(MyResult.success(list.toString()));
+        resp.getWriter().write(MyResult.success(list));
 //        req.setAttribute("orders", json);
     }
 
