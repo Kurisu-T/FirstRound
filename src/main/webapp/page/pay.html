@@ -101,7 +101,7 @@
                 .then(data => {
                     if (data.code === '200') {
                         alert('已提交申请');
-                        window.location.href = `/page/pay.html`;
+                        window.location.reload();
                     } else {
                         alert(`申请失败：${data.msg}`);
                     }

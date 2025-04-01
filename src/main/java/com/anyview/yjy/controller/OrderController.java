@@ -76,11 +76,35 @@ public class OrderController extends HttpServlet {
             case "/pay":
                 pay(req, resp);
                 break;
+            case "/cancel":
+                cancel(req, resp);
+                break;
             default:
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
 
+    }
+
+    /**
+     * 用户申请取消订单
+     * @param req
+     * @param resp
+     */
+    private void cancel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long orderId = Long.parseLong(req.getParameter("orderId"));
+        Orders order = orderService.getById(orderId);
+        if(order == null) {
+            resp.getWriter().write(MyResult.error("未查询到订单消息"));
+            return;
+        }
+        if(order.getStatus() != ORDER_PAID) {
+            resp.getWriter().write(MyResult.error("订单已处理或无法退款"));
+            return;
+        }
+        order.setStatus(ORDER_WAIT);
+        orderService.update(order);
+        resp.getWriter().write(MyResult.success());
     }
 
     /**
