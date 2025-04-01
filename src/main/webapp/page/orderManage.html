@@ -9,6 +9,13 @@
     <h3>申请列表</h3>
     <pre id="applyList"></pre>
 
+    <form id="manageOrder">
+        <p><h3>处理退款申请</h3></p>
+        <p>订单id：<input type="text" id="orderId" required></p>
+        <button type="button" id="agree">同意退款</button>
+        <button type="button" id="disagree">拒绝退款</button>
+    </form>
+
     <script>
         window.addEventListener('load', function() {
             fetch('/order/cancel', {
@@ -43,6 +50,62 @@
                 console.error('请求失败:', error);
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 通用请求函数
+            const sendStatusRequest = (status) => {
+                const orderId = document.getElementById('orderId').value.trim();
+                
+                // 验证输入
+                if (!orderId) {
+                    alert('请输入订单ID');
+                    return;
+                }
+
+                // 构造请求数据
+                const requestData = {
+                    orderId: orderId,
+                    status: status
+                };
+
+                fetch(`/order/cancelOrder?orderId=${orderId}&status=${status}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'include', // 携带 Cookie
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('网络响应异常');
+                })
+                .then(data => {
+                    if (data.code === '200') {
+                        alert(status === 0 ? '已同意申请' : '已拒绝申请');
+                        document.getElementById('orderId').value = ''; // 清空输入框
+                        window.location.reload();
+                    } else {
+                        alert(`操作失败：${data.msg}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('请求失败:', error);
+                    alert('请求发送失败，请检查控制台');
+                });
+            };
+            // 绑定按钮事件
+            document.getElementById('agree').addEventListener('click', () => {
+                sendStatusRequest(0); // 状态码 0
+            });
+
+            document.getElementById('disagree').addEventListener('click', () => {
+                sendStatusRequest(1); // 状态码 1
+            });
+        });
+
     </script>
 </body>
 </html>

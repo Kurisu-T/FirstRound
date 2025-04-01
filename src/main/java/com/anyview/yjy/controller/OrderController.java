@@ -4,6 +4,7 @@ import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
+import com.anyview.yjy.utils.DataUtils.ParseData;
 import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.anyview.yjy.utils.code.*;
 
@@ -84,7 +86,57 @@ public class OrderController extends HttpServlet {
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
+    }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        if(path == null || path.equals("")) {
+            resp.getWriter().write(MyResult.error("未知错误"));
+            return;
+        }
+
+        if(path.startsWith("/cancelOrder")) {
+            manageOrder(req, resp);
+        } else {
+            resp.getWriter().write(MyResult.error("域名错误"));
+        }
+    }
+
+    /**
+     * 处理退款申请
+     * @param req
+     * @param resp
+     */
+    private void manageOrder(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Map<String, Object> data = ParseData.getData(req);
+        Long orderId = Long.parseLong(data.get("orderId").toString());
+        Long status = Long.parseLong(data.get("status").toString());
+        if(orderId == null || status == null) {
+            resp.getWriter().write(MyResult.error("请求获取失败"));
+            return;
+        }
+        Orders order = orderService.getById(orderId);
+        if(order == null) {
+            resp.getWriter().write(MyResult.error("订单获取失败"));
+            return;
+        }
+
+        if(order.getStatus() != ORDER_WAIT) {
+            resp.getWriter().write(MyResult.error("订单未支付或已处理"));
+            return;
+        }
+        if(status == 0) {
+            order.setStatus(ORDER_CANCEL);
+            User user = userService.getById(order.getUserId());
+            user.setMoney(user.getMoney() + order.getPrice());
+            System.out.println(user);
+            userService.update(user);
+        } else if(status == 1) {
+            order.setStatus(ORDER_REJECT);
+        }
+        orderService.update(order);
+        resp.getWriter().write(MyResult.success());
     }
 
     /**
