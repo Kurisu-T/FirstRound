@@ -109,6 +109,11 @@ public class OrderDao {
             return MOVIE_NO_FIND;
         }
 
+        //库存不足
+        if(movie.getAmount() <= 0) {
+            return LCAK;
+        }
+
         // 检查订单是否冲突
         boolean empty = isEmpty(movieId, seatId, movie.getShowTime());
         if(!empty) {
@@ -139,7 +144,7 @@ public class OrderDao {
             ps.setString(5,order.getShowTime().toString());
             ps.setString(6,order.getEndTime().toString());
             ps.setString(7,order.getCreateTime().toString());
-            ps.setLong(8, order.getStatus());
+            ps.setLong( 8, order.getStatus());
             ps.setLong(9, order.getPrice());
             ps.executeUpdate();
             rs = ps.getGeneratedKeys();

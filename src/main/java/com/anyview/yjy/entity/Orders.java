@@ -2,7 +2,6 @@ package com.anyview.yjy.entity;
 
 import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 public class Orders {

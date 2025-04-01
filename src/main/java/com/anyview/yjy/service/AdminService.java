@@ -1,7 +1,6 @@
 package com.anyview.yjy.service;
 
 import com.anyview.yjy.dao.AdminDao;
-import com.anyview.yjy.dao.UserDao;
 import com.anyview.yjy.entity.Admin;
 import com.anyview.yjy.utils.DTO.AdminLoginDTO;
 import com.anyview.yjy.utils.VO.AdminLoginVO;

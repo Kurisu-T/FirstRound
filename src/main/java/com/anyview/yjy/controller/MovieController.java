@@ -7,7 +7,6 @@ import com.anyview.yjy.utils.DataUtils.ParseData;
 import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 import com.anyview.yjy.utils.result.MyResult;
-import com.anyview.yjy.utils.result.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -40,40 +38,11 @@ public class MovieController extends HttpServlet {
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
-//        Long userId = (Long) req.getSession().getAttribute("userId");
-//        Long adminId = (Long) req.getSession().getAttribute("adminId");
-//
-//        if((userId == null && adminId == null) || (userId != null && adminId != null)) {
-//            req.getSession().invalidate();
-//            resp.sendRedirect("index.jsp");
-//            return;
-//        }
-//
-//        if(userId != null && userId > 0) {
-//            List<MovieVO> list = movieService.list();
-//            String movieJSON = jsonUtils.toJson(list);
-//            resp.getWriter().write(movieJSON);
-//            req.setAttribute("movie", movieJSON);
-//            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
-//        }
-//        else if(adminId != null && adminId > 0) {
-//            List<Movie> list = movieService.listByAdmin();
-//            String movieJSON = jsonUtils.toMovieJson(list);
-//            resp.getWriter().write(movieJSON);
-//            req.setAttribute("movie", movieJSON);
-//            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
-//        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathInfo = req.getPathInfo();
-        // TODO jsp 改 html
-        /*System.out.println(pathInfo);
-        if(pathInfo.equals("/buy")) {
-            System.out.println("join in movie/buy");
-            req.getRequestDispatcher("//WEB-INF/user.html").forward(req, resp);
-        }*/
         Long userId = (Long) req.getSession().getAttribute("userId");
         Long adminId = (Long) req.getSession().getAttribute("adminId");
 
@@ -108,7 +77,7 @@ public class MovieController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long adminId = (Long) req.getSession().getAttribute("adminId");
         if(adminId == null) {
-            resp.getWriter().write(Result.error("权限不足"));
+            resp.getWriter().write(MyResult.error("权限不足"));
             return;
         }
 
@@ -118,7 +87,7 @@ public class MovieController extends HttpServlet {
             update(req, resp);
         }
         else {
-            resp.getWriter().write(Result.error("域名错误"));
+            resp.getWriter().write(MyResult.error("域名错误"));
         }
     }
 
@@ -161,22 +130,11 @@ public class MovieController extends HttpServlet {
 
         if(userId != null && userId > 0) {
             List<MovieVO> list = movieService.list();
-//            String movieJSON = jsonUtils.toJson(list);
-//            if(movieJSON.equals("error")){
-//                resp.getWriter().write(MyResult.error("error"));
-//                return;
-//            }
             resp.getWriter().write(MyResult.success(list));
-//            System.out.println(MyResult.success(list));
-//            req.setAttribute("movie", movieJSON);
-//            req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
         }
         else if(adminId != null && adminId > 0) {
             List<Movie> list = movieService.listByAdmin();
-//            String movieJSON = jsonUtils.toMovieJson(list);
             resp.getWriter().write(MyResult.success(list));
-//            req.setAttribute("movie", movieJSON);
-//            req.getRequestDispatcher("/WEB-INF/movieOfAdmin.jsp").forward(req, resp);
         }
     }
 
@@ -200,12 +158,9 @@ public class MovieController extends HttpServlet {
         }
 
         String movieUpdateId = req.getParameter("movieId");
-//        System.out.println(movieUpdateId);
         Long movieId = Long.parseLong(movieUpdateId);
         Movie movie = movieService.adminGetById(movieId);
-//        System.out.println(movie);
         req.removeAttribute("movie");
-//        req.setAttribute("movie", movie);
         resp.getWriter().write(MyResult.success(movie));
     }
 
@@ -227,18 +182,7 @@ public class MovieController extends HttpServlet {
         LocalDateTime endTime = TimeJSON.JSONtoTime(dateTime);
         String description = (String) data.get("description");
         Integer amount = Integer.parseInt(data.get("amount").toString());
-        System.out.println(data.get("price"));
         Integer price = Integer.parseInt(data.get("price").toString());
-        System.out.println(8);
-
-
-//        String movieName = req.getParameter("name");
-//        Long hall = Long.parseLong(req.getParameter("hall"));
-//        System.out.println("get hall ok");
-//        LocalDateTime showTime = LocalDateTime.parse(req.getParameter("showTime"));
-//        System.out.println("get show time ok");
-//        String description = req.getParameter("description");
-//        System.out.println("get description ok");
 
         Movie movie = new Movie();
         movie.setId(movieId);
@@ -250,40 +194,8 @@ public class MovieController extends HttpServlet {
         movie.setPrice(price);
         movie.setDescription(description);
 
-        System.out.println(MyResult.success(movie));
         movieService.updateNoLock(movie);
-//        req.removeAttribute("movie");
-//        resp.getWriter().write(jsonUtils.toJson(movie));
         resp.getWriter().write(MyResult.success(movie));
-//        try {
-//            doGet(req, resp);
-//        } catch (ServletException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
-
-    /**
-     * 购票
-     * @param req
-     * @param resp
-     * @throws ServletException
-     * @throws IOException
-     */
-//    private void buyTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String movie = req.getParameter("movieID");
-//        String seat = req.getParameter("seat");
-//        Long movieId = Long.parseLong(movie);
-//        Long seatId = Long.parseLong(seat);
-//        Long userId = (Long) req.getSession().getAttribute("userId");
-//        int res = orderService.add(userId, movieId, seatId);
-//        if(res > 0) {
-//            resp.getWriter().write(MyResult.success());
-//            orderController.doGet(req, resp);
-//        } else {
-//            resp.getWriter().write(MyResult.error("购票失败"));
-//        }
-//    }
 
 }

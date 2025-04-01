@@ -57,15 +57,6 @@ public class OrderController extends HttpServlet {
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
-
-//        if(userId != null && userId > 0) {
-//            System.out.println("Test of User...... " + userId);
-//            req.getRequestDispatcher("/WEB-INF/UserOrder.jsp").forward(req, resp);
-//        }
-//        else if(adminId != null && adminId > 0) {
-//            System.out.println("Test of Admin...... " + adminId);
-//            req.getRequestDispatcher("/WEB-INF/AdminOrder.jsp").forward(req, resp);
-//        }
     }
 
 
@@ -201,8 +192,7 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("订单无需支付"));
             return;
         }
-        User user = new User();
-        user = userService.getById(UserId);
+        User user = userService.getById(UserId);
         if(user == null) {
             resp.getWriter().write(MyResult.error("未查询到用户信息"));
             return;
@@ -244,7 +234,6 @@ public class OrderController extends HttpServlet {
     private void userOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
         resp.getWriter().write(MyResult.success(list));
-//        req.setAttribute("orders", json);
     }
 
     /**
@@ -256,7 +245,6 @@ public class OrderController extends HttpServlet {
      */
     private void adminOrderList(HttpServletRequest req, HttpServletResponse resp, Long userId, Long adminId) throws IOException {
         List<Orders> list = orderService.list(userId, adminId);
-//        String json = jsonUtils.toOrderJson(list);
         resp.getWriter().write(MyResult.success(list));
     }
 
@@ -278,9 +266,7 @@ public class OrderController extends HttpServlet {
         Long movieId = Long.parseLong(req.getParameter("movieId"));
         Long seatId = Long.parseLong(req.getParameter("seatId"));
 
-        System.out.println("create lock");
         Jedis jedis = JedisUtils.getJedis();
-        System.out.println("lock had created");
         Long lock = jedis.setnx(LOCK + movieId, "");
         if(lock == null || lock <= 0) {
             resp.getWriter().write(MyResult.error("购票失败"));
@@ -294,19 +280,13 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("电影信息未找到"));
         } else if(number.equals(SEAT_NOT_NULL)) {
             resp.getWriter().write(MyResult.error("座位已被占用"));
+        }else if(number.equals(LCAK)) {
+            resp.getWriter().write(MyResult.error("库存不足"));
         } else if(number.equals(BUY_FAIL)) {
             resp.getWriter().write(MyResult.error("未知错误"));
         } else {
             resp.getWriter().write(MyResult.success(number));
         }
         jedis.del(LOCK + movieId);
-
-//        if(number > 0) {
-//            resp.getWriter().write(MyResult.success());
-//        } else if (number == -1){
-//            resp.getWriter().write(MyResult.error("请更换座位号"));
-//        } else {
-//            resp.getWriter().write(MyResult.error("购票失败"));
-//        }
     }
 }

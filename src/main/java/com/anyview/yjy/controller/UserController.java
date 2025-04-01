@@ -115,16 +115,6 @@ public class UserController extends HttpServlet {
      * @param resp
      */
     private void userUpdate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-//        User user = (User) req.getSession().getAttribute("user");
-//        req.getSession().invalidate();
-//
-//        String name = req.getParameter("name");
-//        String phone = req.getParameter("phone");
-//        String password = req.getParameter("password");
-//
-//        user.setName(name);
-//        user.setPhone(phone);
-//        user.setPassword(password);
 
         Long id = (Long) req.getSession().getAttribute("userId");
         User user = userService.getById(id);
@@ -153,8 +143,6 @@ public class UserController extends HttpServlet {
             req.getSession().setAttribute("userId", user.getId());
             resp.getWriter().write(MyResult.success());
         }
-//        resp.getWriter().write(MyResult.success());
-//        resp.sendRedirect("/users");
     }
 
 
@@ -182,7 +170,6 @@ public class UserController extends HttpServlet {
         UserRegisterVO vo = userService.register(user);
 
         resp.getWriter().write(vo == null ? MyResult.error("注册失败") : MyResult.success(vo));
-//        resp.sendRedirect("/");
     }
 
     /**
@@ -202,7 +189,6 @@ public class UserController extends HttpServlet {
         UserLoginVO userVO = userService.login(user);
         if(userVO == null){
             resp.getWriter().write(MyResult.error("手机号或密码错误"));
-//            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long userId = userVO.getId();
 
@@ -210,7 +196,6 @@ public class UserController extends HttpServlet {
             req.getSession().setAttribute("userId", userId);
 
             resp.getWriter().write(MyResult.success(userVO));
-//            resp.sendRedirect("/users");
         }
     }
 }

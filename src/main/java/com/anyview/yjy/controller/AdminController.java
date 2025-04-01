@@ -12,9 +12,7 @@ import com.anyview.yjy.utils.DTO.AdminLoginDTO;
 import com.anyview.yjy.utils.DataUtils.ParseData;
 import com.anyview.yjy.utils.VO.AdminLoginVO;
 import com.anyview.yjy.utils.VO.AdminRegisterVO;
-import com.anyview.yjy.utils.jsonUtils;
 import com.anyview.yjy.utils.result.MyResult;
-import com.mysql.cj.callback.MysqlCallback;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -68,9 +66,6 @@ public class AdminController extends HttpServlet {
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
-
-//        req.getSession().setAttribute("admin", admin);
-//        req.getRequestDispatcher("/admin.html").forward(req, resp);
     }
 
     @Override
@@ -161,15 +156,6 @@ public class AdminController extends HttpServlet {
      * @throws IOException
      */
     private void userUpdate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-//        Admin admin = (Admin) req.getSession().getAttribute("admin");
-//
-//        String name = req.getParameter("name");
-//        String phone = req.getParameter("phone");
-//        String password = req.getParameter("password");
-//
-//        admin.setName(name);
-//        admin.setPhone(phone);
-//        admin.setPassword(password);
 
         Long adminId = (Long) req.getSession().getAttribute("adminId");
         Admin admin = adminService.getById(adminId);
@@ -194,8 +180,6 @@ public class AdminController extends HttpServlet {
             req.getSession().setAttribute("adminId", admin.getId());
             resp.getWriter().write(MyResult.success());
         }
-//        resp.getWriter().write(jsonUtils.toJson(admin));
-//        resp.sendRedirect("/admin");
     }
 
     /**
@@ -222,7 +206,6 @@ public class AdminController extends HttpServlet {
         AdminRegisterVO vo = adminService.register(admin);
 
         resp.getWriter().write(vo == null ? MyResult.error("注册失败") : MyResult.success(vo));
-//        resp.sendRedirect("/");
     }
 
     /**
@@ -242,7 +225,6 @@ public class AdminController extends HttpServlet {
         AdminLoginVO vo = adminService.login(admin);
         if(vo == null){
             resp.getWriter().write(MyResult.error("手机号或密码错误"));
-//            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Long adminId = vo.getId();
 
@@ -250,7 +232,6 @@ public class AdminController extends HttpServlet {
             req.getSession().setAttribute("adminId", adminId);
 
             resp.getWriter().write(MyResult.success(vo));
-//            resp.sendRedirect("/admin");
         }
     }
 

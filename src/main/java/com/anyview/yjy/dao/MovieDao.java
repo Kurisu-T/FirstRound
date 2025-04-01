@@ -214,7 +214,7 @@ public class MovieDao {
      * @param movie
      */
     public void add(Movie movie) {
-        String sql = "insert into movie(name, show_time, end_time, hall, amount, description, create_time) values(?,?,?,?,?,?,?)";
+        String sql = "insert into movie(name, show_time, end_time, hall, amount, description, create_time, price) values(?,?,?,?,?,?,?,?)";
 
         try {
             conn = DBconnection.getConnection();
@@ -226,6 +226,7 @@ public class MovieDao {
             ps.setInt(5, movie.getAmount());
             ps.setString(6, movie.getDescription());
             ps.setString(7, movie.getCreateTime().toString());
+            ps.setLong(8, movie.getPrice());
 
             ps.executeUpdate();
         } catch (SQLException e) {
