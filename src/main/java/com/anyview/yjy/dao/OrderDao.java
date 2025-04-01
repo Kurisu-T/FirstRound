@@ -1,5 +1,6 @@
 package com.anyview.yjy.dao;
 
+import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.utils.DBconnection;
 import com.anyview.yjy.utils.DTO.MovieDTO;
@@ -102,7 +103,7 @@ public class OrderDao {
         }
 
         String sql = "insert into orders(user_id, movie, hall, seat, show_time, end_time, create_time, status, price) values(?,?,?,?,?,?,?,?,?)";
-        MovieDTO movie = movieDao.getById(movieId);
+        Movie movie = movieDao.adminGetById(movieId);
         // 电影不存在
         if(movie.getId() == null) {
             return MOVIE_NO_FIND;
@@ -125,6 +126,14 @@ public class OrderDao {
         order.setCreateTime(LocalDateTime.now());
         order.setPrice(movie.getPrice());
         order.setStatus(ORDER_UNPAID); // 订单状态未支付
+
+        // 库存不足
+        if(movie.getAmount() < 1) {
+            return LCAK;
+        }
+
+        movie.setAmount(movie.getAmount() - 1);
+        if(!movieDao.update(movie)) return BUY_FAIL;
 
         try {
             ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

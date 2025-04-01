@@ -18,5 +18,6 @@ public class code {
     public static final Integer  MOVIE_NO_FIND = 0;   // 电影信息未找到
     public static final Integer  SEAT_NOT_NULL = -1;   // 座位已被占用
     public static final Integer  BUY_FAIL = -2;        // 购买失败
+    public static final Integer  LCAK = -3;
     public static final Integer  BUY_SUCCESS = 1;     // 购买成功
 }

@@ -7,10 +7,7 @@ import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 import com.anyview.yjy.utils.result.MyResult;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,10 +151,41 @@ public class MovieDao {
     }
 
     /**
-     * 更新电影信息
+     * 更新电影信息（有锁）
      * @param movie
      */
-    public void update(Movie movie) {
+    public boolean update(Movie movie) {
+        String sql = "update movie set name = ?, hall = ?, show_time = ?, end_time = ?, amount = ?, price = ?, description = ? where id = ? and amount = ?";
+
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, movie.getName());
+            ps.setLong(2, movie.getHall());
+            ps.setObject(3, movie.getShowTime());
+            ps.setObject(4, movie.getEndTime());
+            ps.setInt(5, movie.getAmount());
+            ps.setInt(6,movie.getPrice());
+            ps.setString(7, movie.getDescription());
+            ps.setLong(8, movie.getId());
+            //乐观锁
+            ps.setLong(9, movie.getAmount() + 1);
+
+            int number = ps.executeUpdate();
+            if(number > 0) return true;
+            else return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 更新电影信息（无锁）
+     * @param movie
+     * @return
+     */
+    public boolean updateNoLock(Movie movie) {
         String sql = "update movie set name = ?, hall = ?, show_time = ?, end_time = ?, amount = ?, price = ?, description = ? where id = ?";
 
         try {
@@ -172,7 +200,9 @@ public class MovieDao {
             ps.setString(7, movie.getDescription());
             ps.setLong(8, movie.getId());
 
-            ps.executeUpdate();
+            int number = ps.executeUpdate();
+            if(number > 0) return true;
+            else return false;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -189,21 +219,13 @@ public class MovieDao {
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
-            System.out.println("here ?");
             ps.setString(1, movie.getName());
-            System.out.println(1);
             ps.setString(2, movie.getShowTime().toString());
-            System.out.println(2);
             ps.setString(3, movie.getEndTime().toString());
-            System.out.println(3);
             ps.setLong(4, movie.getHall());
-            System.out.println(4);
             ps.setInt(5, movie.getAmount());
-            System.out.println(5);
             ps.setString(6, movie.getDescription());
-            System.out.println(6);
             ps.setString(7, movie.getCreateTime().toString());
-            System.out.println(7);
 
             ps.executeUpdate();
         } catch (SQLException e) {

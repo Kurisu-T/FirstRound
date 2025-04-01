@@ -1,7 +1,9 @@
 package com.anyview.yjy.controller;
 
+import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.entity.User;
+import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DataUtils.ParseData;
@@ -22,6 +24,7 @@ import static com.anyview.yjy.utils.code.*;
 public class OrderController extends HttpServlet {
     OrderService orderService = new OrderService();
     UserService userService = new UserService();
+    MovieService movieService = new MovieService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
@@ -130,8 +133,11 @@ public class OrderController extends HttpServlet {
             order.setStatus(ORDER_CANCEL);
             User user = userService.getById(order.getUserId());
             user.setMoney(user.getMoney() + order.getPrice());
-            System.out.println(user);
             userService.update(user);
+
+            Movie movie = movieService.adminGetById(order.getMovie());
+            movie.setAmount(movie.getAmount() + 1);
+            movieService.updateNoLock(movie);
         } else if(status == 1) {
             order.setStatus(ORDER_REJECT);
         }
@@ -275,6 +281,8 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("电影信息未找到"));
         } else if(number.equals(SEAT_NOT_NULL)) {
             resp.getWriter().write(MyResult.error("座位已被占用"));
+        } else if(number.equals(LCAK)) {
+            resp.getWriter().write(MyResult.error("库存不足"));
         } else if(number.equals(BUY_FAIL)) {
             resp.getWriter().write(MyResult.error("未知错误"));
         } else {
