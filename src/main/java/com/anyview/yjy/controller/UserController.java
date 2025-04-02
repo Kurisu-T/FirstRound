@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import static com.anyview.yjy.utils.code.USER_NORMAL;
 
-// TODO 身份验证拦截器
+
 @WebServlet("/users/*")
 public class UserController extends HttpServlet {
 
@@ -81,6 +81,9 @@ public class UserController extends HttpServlet {
 
     /**
      * 获取即将放映的电影
+     *
+     *  这里只会返回还没有放映的电影，已经放映过的电影不会展示出来
+     *
      * @param req
      * @param resp
      */
@@ -140,7 +143,6 @@ public class UserController extends HttpServlet {
 
         if(user.getName().isEmpty() || user.getPhone().isEmpty() || user.getPassword().isEmpty()){
             resp.getWriter().write(MyResult.error("修改失败"));
-            return;
         } else {
             userService.update(user);
             req.getSession().setAttribute("userId", user.getId());

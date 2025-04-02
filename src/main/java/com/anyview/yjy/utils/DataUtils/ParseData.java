@@ -10,7 +10,7 @@ import java.util.Map;
 public class ParseData {
 
     /**
-     * 获取前端发送的 JSON 数据
+     * 获取请求参数
      * @param request
      * @return
      */
@@ -18,6 +18,7 @@ public class ParseData {
         ObjectMapper mapper = new ObjectMapper();
         try {
             Map<String, Object>Data = mapper.readValue(
+                    // 简单点说就是 Spring Boot 中的 @RequestBody
                     request.getInputStream(),
                     new TypeReference<Map<String, Object>>(){}
                     );

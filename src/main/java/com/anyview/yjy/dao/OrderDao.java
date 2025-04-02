@@ -3,9 +3,6 @@ package com.anyview.yjy.dao;
 import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.entity.Orders;
 import com.anyview.yjy.utils.DBconnection;
-import com.anyview.yjy.utils.DTO.MovieDTO;
-import com.anyview.yjy.utils.code;
-
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,7 +25,6 @@ public class OrderDao {
         List<Orders> list = new ArrayList<Orders>();
         if(adminId != null) {
             String sql = "select * from orders";
-//            System.out.println("Test of adminId order " + adminId);
 
             try {
                 conn = DBconnection.getConnection();
@@ -56,16 +52,13 @@ public class OrderDao {
 
         } else if(userId != null) {
             String sql = "select * from orders where user_id = ?";
-//            System.out.println("Test of user order " + userId);
             try {
                 conn = DBconnection.getConnection();
 
-//                System.out.println("Test of user order " + userId);
                 ps = conn.prepareStatement(sql);
                 ps.setLong(1, userId);
 
                 rs = ps.executeQuery();
-//                System.out.println("Test of user order " + userId);
                 while(rs.next()) {
                     Orders order = new Orders();
                     order.setId(rs.getLong("id"));
@@ -85,7 +78,6 @@ public class OrderDao {
                 throw new RuntimeException(e);
             }
         }
-//        System.out.println(list);
         return list;
     }
 
@@ -114,7 +106,7 @@ public class OrderDao {
             return LACK;
         }
 
-        // 检查订单是否冲突
+        // 检查座位是否空闲
         boolean empty = isEmpty(movieId, seatId, movie.getShowTime());
         if(!empty) {
             return SEAT_NOT_NULL;
@@ -132,11 +124,13 @@ public class OrderDao {
         order.setPrice(movie.getPrice());
         order.setStatus(ORDER_UNPAID); // 订单状态未支付
 
-        movie.setAmount(movie.getAmount() - 1);
+        movie.setAmount(movie.getAmount() - 1); // 库存-1
         movieDao.update(movie);
 
         try {
+//            添加属性,获取订单主键 id
             ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
             ps.setLong(1, order.getUserId());
             ps.setLong(2, order.getMovie());
             ps.setLong(3, order.getHall());
@@ -147,6 +141,7 @@ public class OrderDao {
             ps.setLong( 8, order.getStatus());
             ps.setLong(9, order.getPrice());
             ps.executeUpdate();
+//          Mybatis -> useGeneratedKeys = true
             rs = ps.getGeneratedKeys();
             if(rs.next()) {
                 return rs.getInt(1);
@@ -283,7 +278,7 @@ public class OrderDao {
     }
 
     /**
-     * 获取即将放映的电影数量
+     * 获取即将放映的电影数量, 用于提醒用户观影
      * @param userId
      * @return
      */
@@ -337,15 +332,31 @@ public class OrderDao {
     }
 
     /**
-     * 电影结束，更新订单状态
+     * 电影结束，更新已支付订单状态
      */
     public void finishTicket() {
         String sql = "update orders set status = ? where end_time < now() and status = ?";
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
-            ps.setLong(1,ORDER_COMPLETE);
-            ps.setLong(2,ORDER_PAID);
+            ps.setLong(1,ORDER_COMPLETE);   // 设置状态为已完成
+            ps.setLong(2,ORDER_PAID);   // 更新对象是已支付且观影结束的订单
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 电影结束, 更新未支付订单状态
+     */
+    public void CancelTicket() {
+        String sql = "update orders set status = ? where end_time < now() and status = ?";
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,ORDER_CANCEL);   // 设置状态为已完成
+            ps.setLong(2,ORDER_UNPAID);   // 更新对象是已支付且观影结束的订单
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

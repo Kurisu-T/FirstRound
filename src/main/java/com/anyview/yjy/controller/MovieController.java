@@ -25,7 +25,7 @@ public class MovieController extends HttpServlet {
     OrderController orderController = new OrderController();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getPathInfo();
+        String path = "/" + req.getPathInfo().split("/")[1];
 
         switch (path) {
             case "/list":
@@ -52,8 +52,6 @@ public class MovieController extends HttpServlet {
             return;
         }
 
-        System.out.println(pathInfo);
-
         switch (pathInfo) {
             case "/admin":
                 doGet(req, resp);
@@ -68,7 +66,7 @@ public class MovieController extends HttpServlet {
                 getMovieById(req, resp);
                 break;
             default:
-                req.getRequestDispatcher("/WEB-INF/movieOfUser.jsp").forward(req, resp);
+                resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
     }
@@ -99,6 +97,7 @@ public class MovieController extends HttpServlet {
      */
     private void add(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+        // 这里用到了一个获取请求参数的一个函数
         Map<String, Object> data = ParseData.getData(req);
         Movie movie = new Movie();
         movie.setCreateTime(LocalDateTime.now());
@@ -148,8 +147,9 @@ public class MovieController extends HttpServlet {
     private void getMovieById(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long adminId =(Long) req.getSession().getAttribute("adminId");
+        Long userId = (Long) req.getSession().getAttribute("userId");
 
-        if(adminId == null) {
+        if(adminId == null && userId == null) {
             try {
                 resp.getWriter().write(MyResult.error("权限不足"));
             } catch (IOException e) {
@@ -171,12 +171,14 @@ public class MovieController extends HttpServlet {
      */
     private void update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
+        // 获取url中的电影id
         Long movieId = Long.parseLong(path.split("/")[2]);
         Map<String, Object> data = ParseData.getData(req);
 
         String name = (String) data.get("name");
         Long hall = Long.parseLong((String) data.get("hall"));
         String dateTime = (String) data.get("showTime");
+        // 自己写的格式转换工具类，将前端的 "yyyy-MM-dd HH:mm:ss" 转成 LocalDateTime 格式
         LocalDateTime showTime = TimeJSON.JSONtoTime(dateTime);
         dateTime = (String)data.get("endTime");
         LocalDateTime endTime = TimeJSON.JSONtoTime(dateTime);

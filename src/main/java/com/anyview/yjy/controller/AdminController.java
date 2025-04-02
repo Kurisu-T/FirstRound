@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.anyview.yjy.utils.code.USER_BAN;
+import static com.anyview.yjy.utils.code.USER_NORMAL;
+
 @WebServlet("/admin/*")
 public class AdminController extends HttpServlet {
 
@@ -34,8 +37,12 @@ public class AdminController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(); // 获取session
 
+        /*
+            获取 session 存储的用户和管理员id，这里我通过获取的id判断权限，代替请求头
+            后面不再赘述
+         */
         Long adminId = (Long) session.getAttribute("adminId");
         Long userId = (Long) session.getAttribute("userId");
         if(adminId == null){
@@ -63,6 +70,7 @@ public class AdminController extends HttpServlet {
                 getMovieList(req, resp);
                 break;
             default:
+                // MyResult: 自己写的一个返回响应结果的工具类，没有使用Jackson
                 resp.getWriter().write(MyResult.error("域名错误"));
                 break;
         }
@@ -74,6 +82,11 @@ public class AdminController extends HttpServlet {
         String path = req.getPathInfo();
 
         if(path == null || path.isEmpty()){
+            /*
+                域名错误，跳转404页面
+                这里只是个人的一个尝试，为了了解resp中的api
+                后面的代码会通过响应 ERROR 的 JSON 数据代替这种方式
+             */
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -123,7 +136,9 @@ public class AdminController extends HttpServlet {
             return;
         }
 
-        user.setStatus(status);
+        if(status == 0) user.setStatus(USER_BAN);   // 拉黑
+        else user.setStatus(USER_NORMAL);           // 正常
+
         userService.update(user);
 
         resp.getWriter().write(MyResult.success());
@@ -174,7 +189,6 @@ public class AdminController extends HttpServlet {
 
         if(admin.getName().isEmpty() || admin.getPhone().isEmpty() || admin.getPassword().isEmpty()){
             resp.getWriter().write(MyResult.error("修改失败"));
-            return;
         } else {
             adminService.update(admin);
             req.getSession().setAttribute("adminId", admin.getId());
@@ -228,6 +242,10 @@ public class AdminController extends HttpServlet {
         } else {
             Long adminId = vo.getId();
 
+            /* 清空session，刷新权限，同样的，在用户登录时也会进行这个操作
+                  确保只 session 只有管理员或用户有一个id
+                  防止产生权限冲突，后面不再赘述
+             */
             req.getSession().invalidate();
             req.getSession().setAttribute("adminId", adminId);
 

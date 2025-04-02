@@ -71,9 +71,16 @@ public class OrderService {
     }
 
     /**
-     * 电影结束，更新订单状态
+     * 电影结束，更新已支付订单状态
      */
     public void finishTicket() {
         orderDao.finishTicket();
+    }
+
+    /**
+     * 电影结束, 更新未支付订单状态
+     */
+    public void CancelTicket() {
+        orderDao.CancelTicket();
     }
 }

@@ -3,25 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户端电影列表</title>
+    <title>电影详细</title>
 </head>
 <body>
-    <h3>查看电影详细信息</h3>
-    <form id="movieDetail">
-        电影ID：<input type="text" id="id" name="id" required>
-        <input type="submit" value="确定">
-    </form>
+    <h3>电影详细</h3>
 
-    <hr>
+    <pre id="result"></pre>
 
-    <h2>电影列表</h2>
-    <pre id="movieList"></pre>
-
-    <hr>
     <form id="buyTicket">
-        <h3>购票</h3>
         <div>
-            电影ID： <input type="text" name="movieId" id="movieID" required>
             座位号： <input type="text" name="seatId" id="seatID" required>
             <input type="submit" value="购票">
         </div>
@@ -29,28 +19,45 @@
 
     <script>
     window.addEventListener('load', function() {
-        const rawDataDiv = document.getElementById('movieList');
-        const storedData = sessionStorage.getItem('movieData');
-        
-        if(storedData) {
-            try {
-                const data = JSON.parse(storedData);
-                rawDataDiv.textContent = JSON.stringify(data, null, 2);
-            } catch(e) {
-                rawDataDiv.textContent = "数据格式错误";
-            }
-            sessionStorage.removeItem('movieData');
-        } else {
-            rawDataDiv.textContent = "没有找到电影数据，请返回重新获取";
-        }
-    });
+        const resultDiv = document.getElementById('result');
+        // 解析URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
 
+        if (!movieId) {
+            resultDiv.textContent = "错误：缺少电影ID参数";
+            return;
+        }
+
+        // 发送GET请求获取详情
+        fetch(`/movie/info?movieId=${encodeURIComponent(movieId)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误！状态码：${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                resultDiv.textContent = `请求失败：${error.message}`;
+            });
+    });
 
     document.getElementById('buyTicket').addEventListener('submit', function(e) {
         e.preventDefault();
 
+        // 获取电影ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+
+        // 创建请求参数
         const formData = new FormData(this);
         const params = new URLSearchParams(formData);
+        
+        // 添加电影ID到请求参数
+        params.append('movieId', movieId);
 
         fetch('/order/buy', {
             method: 'POST',
@@ -81,15 +88,6 @@
             alert('请求失败，请检查网络');
         });
     });
-
-    document.getElementById('movieDetail').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const movieId = document.getElementById('id').value;
-        // 跳转到详情页并携带ID参数
-        window.location.href = `/page/movieDetail.html?id=${encodeURIComponent(movieId)}`;
-    });
-
     </script>
-    
 </body>
 </html>

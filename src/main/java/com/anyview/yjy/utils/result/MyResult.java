@@ -1,5 +1,8 @@
 package com.anyview.yjy.utils.result;
 
+/**
+ * 自定义的响应结果封装类 没有是由 Jackson
+ */
 public class MyResult {
     private Integer code;
     private String msg;
@@ -24,6 +27,7 @@ public class MyResult {
         return json;
     }
 
+    // 重写了所有必要的实体类中的 toString() 方法，确保返回的结果是 JSON 格式
     public static String success(Object data) {
         String json = "{\"code\":\"200\",\"msg\":\"success\",\"data\":" + data.toString() + "}";
         return json;

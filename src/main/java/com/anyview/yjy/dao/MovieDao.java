@@ -3,19 +3,28 @@ package com.anyview.yjy.dao;
 import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.utils.DBconnection;
 import com.anyview.yjy.utils.DTO.MovieDTO;
+import com.anyview.yjy.utils.RedisUtils.GetDataFormJedis;
+import com.anyview.yjy.utils.RedisUtils.JedisUtils;
+import com.anyview.yjy.utils.RedisUtils.PutRedis;
 import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 import com.anyview.yjy.utils.result.MyResult;
+import com.mysql.cj.util.TimeUtil;
+import redis.clients.jedis.Jedis;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.anyview.yjy.utils.code.SELECT_MOVIE;
+import static com.anyview.yjy.utils.code.TTL;
+
 public class MovieDao {
     private Connection conn;
     private PreparedStatement ps;
     private ResultSet rs;
+    private Jedis jedis = JedisUtils.getJedis();
 
     /**
      * 用户端获取电影列表
@@ -61,13 +70,7 @@ public class MovieDao {
 
             while (rs.next()) {
                 Movie movie = new Movie();
-//                Long id = rs.getLong("id");
-//                String name = rs.getString("name");
-//                Long hall = rs.getLong("hall");
-//                LocalDateTime showTime = rs.getObject("show_time", LocalDateTime.class);
-//                LocalDateTime createTime = rs.getObject("create_time", LocalDateTime.class);
-//                String description = rs.getString("description");
-//                System.out.println(id + "->" + name + "->" + hall + "->" + showTime + "->" + createTime + "->" + description);
+
                 movie.setId(rs.getLong("id"));
                 movie.setName(rs.getString("name"));
                 movie.setHall(rs.getLong("hall"));
@@ -77,6 +80,7 @@ public class MovieDao {
                 movie.setDescription(rs.getString("description"));
                 movie.setPrice(rs.getInt("price"));
                 movie.setAmount(rs.getInt("amount"));
+
                 list.add(movie);
 
             }
@@ -120,9 +124,20 @@ public class MovieDao {
      */
     public Movie adminGetById(Long movieId) {
         Movie movie = new Movie();
+//        缓存前缀，用于防止缓存穿透
+        String key = SELECT_MOVIE + movieId;
+
+        // Redis中存在缓存，从Redis中获取数据
+        if(jedis.hget(key, "id") != null) {
+            movie = GetDataFormJedis.getMovie(movieId);
+            return movie;
+        }
+
+        // 否则在MySQL中查询，并将结果添加到Redis
         String sql = "select * from movie where id = ?";
 
         try {
+            System.out.println("查询数据库");
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
 
@@ -139,15 +154,17 @@ public class MovieDao {
                 movie.setAmount(rs.getInt("amount"));
                 movie.setPrice(rs.getInt("price"));
 
-                System.out.println(MyResult.success(movie));
+                PutRedis.putMovie(jedis, key, movie);
 
                 return movie;
+            } else {
+                jedis.hset(key, "id", "0");
+                jedis.expire(key, TTL);
+                return null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return movie;
     }
 
     /**

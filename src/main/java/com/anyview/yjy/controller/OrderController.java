@@ -105,6 +105,7 @@ public class OrderController extends HttpServlet {
      * @param resp
      */
     private void manageOrder(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 获取路径请求参数，后面不再赘述
         Map<String, Object> data = ParseData.getData(req);
         Long orderId = Long.parseLong(data.get("orderId").toString());
         Long status = Long.parseLong(data.get("status").toString());
@@ -119,21 +120,21 @@ public class OrderController extends HttpServlet {
         }
 
         if(order.getStatus() != ORDER_WAIT) {
-            resp.getWriter().write(MyResult.error("订单未支付或已处理"));
+            resp.getWriter().write(MyResult.error("请重新检查订单状态"));
             return;
         }
         if(status == 0) {
-            order.setStatus(ORDER_CANCEL);
+            order.setStatus(ORDER_CANCEL);  // 同意退款，订单取消
             User user = userService.getById(order.getUserId());
             user.setMoney(user.getMoney() + order.getPrice());
             userService.update(user);
 
             Movie movie = movieService.adminGetById(order.getMovie());
             movie.setAmount(movie.getAmount() + 1);
-            movieService.update(movie);
+            movieService.update(movie); // 更新票数
 
         } else if(status == 1) {
-            order.setStatus(ORDER_REJECT);
+            order.setStatus(ORDER_REJECT);  // 不同意退款，订单状态改为拒绝
         }
         orderService.update(order);
         resp.getWriter().write(MyResult.success());
@@ -182,8 +183,7 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("订单或用户信息有误"));
             return;
         }
-        Orders order = new Orders();
-        order = orderService.getById(orderId);
+        Orders order = orderService.getById(orderId);
         if(order == null) {
             resp.getWriter().write(MyResult.error("未查询到订单信息"));
             return;
@@ -201,6 +201,7 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("账户余额不足"));
             return;
         }
+        // 更新用户余额
         user.setMoney(user.getMoney() - order.getPrice());
         order.setStatus(ORDER_PAID);
         userService.update(user);
@@ -266,14 +267,23 @@ public class OrderController extends HttpServlet {
         Long movieId = Long.parseLong(req.getParameter("movieId"));
         Long seatId = Long.parseLong(req.getParameter("seatId"));
 
+        /*
+            申请一个悲观锁。
+            在写悲观锁前，我在后面数据层操作中写了一个乐观锁我没有删
+            这两个都写只是为了练手，应该没人会将两个锁嵌套使用吧（
+         */
         Jedis jedis = JedisUtils.getJedis();
         Long lock = jedis.setnx(LOCK + movieId, "");
         if(lock == null || lock <= 0) {
             resp.getWriter().write(MyResult.error("购票失败"));
             return;
         }
-        jedis.expire(LOCK + movieId, 10);
+        jedis.expire(LOCK + movieId, LOCK_TTL); // 设置悲观锁 TTL 防止死锁
 
+        /*
+            这里的 number 是创建订单的返回结果，如果是 0 或 负数 则代表创建失败，并返回相应的错误信息
+            如果创建成功，则会返回订单 id ，用于跳转订单详细页面
+         */
         Integer number = orderService.add(userId, movieId, seatId);
 
         if(number.equals(MOVIE_NO_FIND)) {
