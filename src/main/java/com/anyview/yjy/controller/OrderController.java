@@ -280,7 +280,7 @@ public class OrderController extends HttpServlet {
             resp.getWriter().write(MyResult.error("电影信息未找到"));
         } else if(number.equals(SEAT_NOT_NULL)) {
             resp.getWriter().write(MyResult.error("座位已被占用"));
-        }else if(number.equals(LCAK)) {
+        }else if(number.equals(LACK)) {
             resp.getWriter().write(MyResult.error("库存不足"));
         } else if(number.equals(BUY_FAIL)) {
             resp.getWriter().write(MyResult.error("未知错误"));

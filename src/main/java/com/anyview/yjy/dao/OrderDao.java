@@ -111,7 +111,7 @@ public class OrderDao {
 
         //库存不足
         if(movie.getAmount() <= 0) {
-            return LCAK;
+            return LACK;
         }
 
         // 检查订单是否冲突
@@ -331,6 +331,22 @@ public class OrderDao {
                 list.add(order);
             }
             return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 电影结束，更新订单状态
+     */
+    public void finishTicket() {
+        String sql = "update orders set status = ? where end_time < now() and status = ?";
+        try {
+            conn = DBconnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,ORDER_COMPLETE);
+            ps.setLong(2,ORDER_PAID);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

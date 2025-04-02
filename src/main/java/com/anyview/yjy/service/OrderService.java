@@ -69,4 +69,11 @@ public class OrderService {
     public List<Orders> getCancelApply() {
         return orderDao.getCancelApply();
     }
+
+    /**
+     * 电影结束，更新订单状态
+     */
+    public void finishTicket() {
+        orderDao.finishTicket();
+    }
 }
