@@ -15,6 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+
+import static com.anyview.yjy.utils.code.USER_NORMAL;
+
 // TODO 身份验证拦截器
 @WebServlet("/users/*")
 public class UserController extends HttpServlet {
@@ -133,7 +136,7 @@ public class UserController extends HttpServlet {
         user.setPhone(phone);
         user.setMoney(money);
         user.setPassword(password);
-        user.setStatus(1);
+        user.setStatus(USER_NORMAL);
 
         if(user.getName().isEmpty() || user.getPhone().isEmpty() || user.getPassword().isEmpty()){
             resp.getWriter().write(MyResult.error("修改失败"));
