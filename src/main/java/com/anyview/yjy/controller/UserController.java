@@ -90,7 +90,6 @@ public class UserController extends HttpServlet {
     private void getMovieShow(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
         Integer number = orderService.getMovieShow(userId);
-        System.out.println(MyResult.success(number));
         if(number == 0) resp.getWriter().write(MyResult.error("Zero"));
         else resp.getWriter().write(MyResult.success(number));
     }

@@ -125,7 +125,7 @@ public class OrderDao {
         order.setStatus(ORDER_UNPAID); // 订单状态未支付
 
         movie.setAmount(movie.getAmount() - 1); // 库存-1
-        movieDao.update(movie);
+        movieDao.updateNoLock(movie);
 
         try {
 //            添加属性,获取订单主键 id
@@ -161,7 +161,7 @@ public class OrderDao {
      * @return
      */
     public boolean isEmpty(Long movieId, Long seatId, LocalDateTime show_time) {
-        String sql = "select count(1) from orders where movie = ? and seat = ? and show_time = ?";
+        String sql = "select count(1) from orders where movie = ? and seat = ? and show_time = ? and status != ?";
 
         try {
             conn = DBconnection.getConnection();
@@ -170,6 +170,7 @@ public class OrderDao {
             ps.setLong(1, movieId);
             ps.setLong(2, seatId);
             ps.setString(3, show_time.toString());
+            ps.setLong(4, ORDER_CANCEL);
 
             rs = ps.executeQuery();
 
@@ -284,7 +285,7 @@ public class OrderDao {
      */
     public Integer getMovieShow(Long userId) {
         String sql = "select count(1) from orders where date_sub(show_time, interval 10 minute) < now() " +
-                "and end_time > now() and status = 1 and user_id = ?";
+                "and end_time > now() and status in (1, 3) and user_id = ?";
         try {
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);

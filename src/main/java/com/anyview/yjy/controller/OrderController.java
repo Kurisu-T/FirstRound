@@ -7,7 +7,9 @@ import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.service.UserService;
 import com.anyview.yjy.utils.DataUtils.ParseData;
+import com.anyview.yjy.utils.MessageQueue.MessageQueue;
 import com.anyview.yjy.utils.RedisUtils.JedisUtils;
+import com.anyview.yjy.utils.RedisUtils.PutRedis;
 import com.anyview.yjy.utils.result.MyResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -131,7 +133,14 @@ public class OrderController extends HttpServlet {
 
             Movie movie = movieService.adminGetById(order.getMovie());
             movie.setAmount(movie.getAmount() + 1);
-            movieService.update(movie); // 更新票数
+            movieService.updateNoLock(movie); // 更新票数
+
+            // 删除缓存
+            Jedis jedis = JedisUtils.getJedis();
+            String key = SELECT_MOVIE + movie.getId();
+            if(jedis.exists(key)) {
+                jedis.del(key);
+            }
 
         } else if(status == 1) {
             order.setStatus(ORDER_REJECT);  // 不同意退款，订单状态改为拒绝
@@ -275,7 +284,7 @@ public class OrderController extends HttpServlet {
         Jedis jedis = JedisUtils.getJedis();
         Long lock = jedis.setnx(LOCK + movieId, "");
         if(lock == null || lock <= 0) {
-            resp.getWriter().write(MyResult.error("购票失败"));
+            resp.getWriter().write(MyResult.error("库存不足"));
             return;
         }
         jedis.expire(LOCK + movieId, LOCK_TTL); // 设置悲观锁 TTL 防止死锁
@@ -285,7 +294,6 @@ public class OrderController extends HttpServlet {
             如果创建成功，则会返回订单 id ，用于跳转订单详细页面
          */
         Integer number = orderService.add(userId, movieId, seatId);
-
         if(number.equals(MOVIE_NO_FIND)) {
             resp.getWriter().write(MyResult.error("电影信息未找到"));
         } else if(number.equals(SEAT_NOT_NULL)) {
@@ -295,6 +303,14 @@ public class OrderController extends HttpServlet {
         } else if(number.equals(BUY_FAIL)) {
             resp.getWriter().write(MyResult.error("未知错误"));
         } else {
+            MessageQueue.push(Long.valueOf(number)); // 添加到消息队列中
+
+            // 删除缓存
+            String key = SELECT_MOVIE + movieId;
+            if(jedis.exists(key)) {
+                jedis.del(key);
+            }
+
             resp.getWriter().write(MyResult.success(number));
         }
         jedis.del(LOCK + movieId);

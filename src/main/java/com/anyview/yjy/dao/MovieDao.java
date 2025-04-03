@@ -137,7 +137,6 @@ public class MovieDao {
         String sql = "select * from movie where id = ?";
 
         try {
-            System.out.println("查询数据库");
             conn = DBconnection.getConnection();
             ps = conn.prepareStatement(sql);
 

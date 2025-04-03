@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.anyview.yjy.utils.code.SELECT_MOVIE_TIME;
+
 /**
  * 监听器, 用于更新观影结束后的订单状态
  */
@@ -29,7 +31,7 @@ public class TicketListener implements ServletContextListener {
             }
         };
         // 从程序启动时开始, 没隔一分钟执行一次 task
-        thread.scheduleAtFixedRate(task, 0, 1, TimeUnit.MINUTES);
+        thread.scheduleAtFixedRate(task, 0, SELECT_MOVIE_TIME, TimeUnit.MINUTES);
     }
 
 //    关闭线程
