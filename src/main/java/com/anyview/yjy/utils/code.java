@@ -7,14 +7,16 @@ public class code {
     public static final String SELECT_MOVIE = "select:movie:";
     // 订单消息队列前缀
     public static final String ORDER_MESSAGE = "order:message";
+    // redis 密码
+    public static final String JEDIS_PASSWORD = "123";
 
     // 订单超市时间 秒
     public static final Integer ORDER_TTL = 1;
     // 检查订单状态的时间间隔 分
     public static final Integer SELECT_MOVIE_TIME = 1;
     // 缓存存活时间 秒
-    public static final Integer TTL = 30;       // 缓存穿透
-    public static final Integer LOCK_TTL = 10;  // 悲观锁
+    public static final Integer TTL = 10;       // 缓存穿透
+    public static final Integer LOCK_TTL = 5;  // 悲观锁
 
     // 账号状态
     public static final Integer USER_BAN = 0;       // 恢复

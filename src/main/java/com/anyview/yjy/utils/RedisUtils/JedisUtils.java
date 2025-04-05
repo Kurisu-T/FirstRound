@@ -2,6 +2,8 @@ package com.anyview.yjy.utils.RedisUtils;
 
 import redis.clients.jedis.Jedis;
 
+import static com.anyview.yjy.utils.code.JEDIS_PASSWORD;
+
 public class JedisUtils {
 
     /**
@@ -9,6 +11,8 @@ public class JedisUtils {
      * @return
      */
     public static Jedis getJedis() {
-        return new Jedis("172.25.84.131", 6379);
+        Jedis jedis = new Jedis("101.37.135.139", 6379);
+        jedis.auth(JEDIS_PASSWORD);
+        return jedis;
     }
 }

@@ -63,7 +63,7 @@ public class MovieController extends HttpServlet {
                 add(req, resp);
                 break;
             case "/update":
-                getMovieById(req, resp);
+                update(req, resp);
                 break;
             default:
                 resp.getWriter().write(MyResult.error("域名错误"));
