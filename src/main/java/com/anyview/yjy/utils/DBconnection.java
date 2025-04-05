@@ -4,9 +4,9 @@ import java.sql.*;
 
 public class DBconnection {
 
-    private static final String url = "jdbc:mysql://172.25.84.131/anyview_first?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&autoReconnect=true&useSSL=false";
+    private static final String url = "jdbc:mysql://101.37.135.139/anyview_first?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&autoReconnect=true&useSSL=false";
     private static final String driver = "com.mysql.cj.jdbc.Driver";
-    private static final String userName = "root";
+    private static final String userName = "anyview_first";
     private static final String password = "123";
 
     static {
