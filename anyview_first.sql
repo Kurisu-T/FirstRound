@@ -11,7 +11,7 @@
  Target Server Version : 80041 (8.0.41-0ubuntu0.24.04.1)
  File Encoding         : 65001
 
- Date: 03/04/2025 15:33:44
+ Date: 05/04/2025 14:46:59
 */
 
 SET NAMES utf8mb4;
@@ -28,7 +28,7 @@ CREATE TABLE `admin`  (
   `password` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of admin
@@ -50,15 +50,15 @@ CREATE TABLE `movie`  (
   `amount` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '数量',
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '电影表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '电影表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of movie
 -- ----------------------------
-INSERT INTO `movie` VALUES (1, '正常购买', '2025-04-18 09:00:00', 0, '2025-04-03 14:22:12', '空', 10, 100, '2025-04-18 09:00:00');
-INSERT INTO `movie` VALUES (2, '余额不足', '2025-04-18 17:00:00', 1, '2025-04-03 14:23:12', '空', 200, 100, '2025-04-18 17:00:00');
-INSERT INTO `movie` VALUES (3, '尚未上映', '2025-04-01 00:00:00', 2, '2025-04-03 14:25:38', '空', 50, 0, '2025-04-01 00:00:00');
-INSERT INTO `movie` VALUES (4, '库存不足', '2025-04-18 19:25:00', 3, '2025-04-03 14:26:18', '空', 100, 0, '2025-04-18 19:25:00');
+INSERT INTO `movie` VALUES (1, '正常购买', '2025-04-18 00:00:00', 0, '2025-04-03 14:22:12', '支付后用户余额正常扣减', 10, 100, '2025-05-18 09:00:00');
+INSERT INTO `movie` VALUES (2, '余额不足', '2025-04-18 00:00:00', 1, '2025-04-03 14:23:12', '余额不足，无法支付', 200, 100, '2025-05-18 17:00:00');
+INSERT INTO `movie` VALUES (3, '尚未上映', '2025-04-01 00:00:00', 2, '2025-04-03 14:25:38', '未上映，用户获取的电影列表没有', 50, 0, '2025-04-01 00:00:00');
+INSERT INTO `movie` VALUES (4, '库存不足', '2025-04-18 00:25:00', 3, '2025-04-03 14:26:18', '库存不足，无法购买', 100, 0, '2025-05-18 19:25:00');
 
 -- ----------------------------
 -- Table structure for orders
@@ -76,7 +76,7 @@ CREATE TABLE `orders`  (
   `status` int NOT NULL COMMENT '订单状态',
   `price` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '单价',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
@@ -95,7 +95,7 @@ CREATE TABLE `user`  (
   `money` double NOT NULL DEFAULT 0 COMMENT '余额',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
