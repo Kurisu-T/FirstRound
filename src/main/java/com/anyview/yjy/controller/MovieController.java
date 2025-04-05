@@ -4,6 +4,7 @@ import com.anyview.yjy.entity.Movie;
 import com.anyview.yjy.service.MovieService;
 import com.anyview.yjy.service.OrderService;
 import com.anyview.yjy.utils.DataUtils.ParseData;
+import com.anyview.yjy.utils.RedisUtils.JedisUtils;
 import com.anyview.yjy.utils.TimeUtils.TimeJSON;
 import com.anyview.yjy.utils.VO.MovieVO;
 import com.anyview.yjy.utils.result.MyResult;
@@ -12,11 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static com.anyview.yjy.utils.code.SELECT_MOVIE;
 
 @WebServlet("/movie/*")
 public class MovieController extends HttpServlet {
@@ -108,6 +112,7 @@ public class MovieController extends HttpServlet {
         movie.setEndTime(TimeJSON.JSONtoTime(data.get("endTime").toString()));
         movie.setAmount(Integer.parseInt(data.get("amount").toString()));
         movie.setPrice(Integer.parseInt(data.get("price").toString()));
+        System.out.println(movie);
         movieService.add(movie);
 
         resp.getWriter().write(MyResult.success());
@@ -171,7 +176,7 @@ public class MovieController extends HttpServlet {
      */
     private void update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
-        // 获取url中的电影id
+        // 获取地址中的电影id
         Long movieId = Long.parseLong(path.split("/")[2]);
         Map<String, Object> data = ParseData.getData(req);
 
@@ -197,6 +202,11 @@ public class MovieController extends HttpServlet {
         movie.setDescription(description);
 
         movieService.updateNoLock(movie);
+
+//        释放缓存
+        Jedis jedis = JedisUtils.getJedis();
+        jedis.del(SELECT_MOVIE + movieId);
+
         resp.getWriter().write(MyResult.success(movie));
     }
 

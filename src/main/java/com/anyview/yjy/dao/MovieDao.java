@@ -157,6 +157,7 @@ public class MovieDao {
 
                 return movie;
             } else {
+//                数据库中没有，写入一个空的缓存，并返回空的数据
                 jedis.hset(key, "id", "0");
                 jedis.expire(key, TTL);
                 return null;

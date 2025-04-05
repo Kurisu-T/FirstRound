@@ -28,6 +28,10 @@ public class MessageQueue {
         jedis.lpush(ORDER_MESSAGE, TimeJSON.timeToJSON(time) + "_" + orderId.toString());
     }
 
+    /**
+     * 获取消息，满足超时条件则修改订单状态，不满足则 push 回队列中
+     * @return
+     */
     public static Message pop(){
         Jedis jedis = JedisUtils.getJedis();
         String elem = jedis.rpop(ORDER_MESSAGE);

@@ -11,7 +11,7 @@ public class JedisUtils {
      * @return
      */
     public static Jedis getJedis() {
-        Jedis jedis = new Jedis("101.37.135.139", 6379);
+        Jedis jedis = new Jedis("172.25.84.131", 6379);
         jedis.auth(JEDIS_PASSWORD);
         return jedis;
     }
